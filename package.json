@@ -1,0 +1,14 @@
+{
+  "name": "com.hananoki.editor-toolbar",
+  "displayName": "EditorToolbar",
+  "version": "1.0.0",
+  "unity": "2018.3",
+  "description": "A list of frequently used functions using \"unity-toolbar-extender\"",
+  "keywords": [
+    "Editor"
+  ],
+  "category": "Editor Extentions",
+  "dependencies": {
+    "com.hananoki.shared-module": "https://github.com/hananoki/SharedModule.git"
+  }
+}
