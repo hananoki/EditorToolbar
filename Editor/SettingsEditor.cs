@@ -3,6 +3,7 @@
 using Hananoki.SharedModule;
 using UnityEditor;
 using UnityEngine;
+using Hananoki.Extensions;
 
 using E = Hananoki.EditorToolbar.SettingsEditor;
 using P = Hananoki.EditorToolbar.SettingsProject;

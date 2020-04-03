@@ -1,12 +1,13 @@
 # EditorToolbar
 
 ![](https://img.shields.io/badge/dynamic/json.svg?uri=https://raw.githubusercontent.com/hananoki/EditorToolbar/master/package.json&label=&query=$.version&prefix=v)
-![](https://img.shields.io/badge/unity-2018.3%20or%20later-green.svg)
+![](https://img.shields.io/badge/unity-2018.3%20or%20later-3BAF75.svg)
+![](https://img.shields.io/badge/license-MIT-informational.svg)
 
 [Japanese](https://translate.google.com/translate?sl=en&tl=ja&u=https://github.com/hananoki/EditorToolbar) (by Google Translate)
 
 ## Overview
-- A list of frequently used functions using "unity-toolbar-extender"
+- Frequently used functions are summarized in the toolbar
 
 ![Preview](Documentation~/Preview.png)
 
@@ -23,6 +24,9 @@
   ...
 }
 ```
+
+## Requirement
+![](https://img.shields.io/badge/SharedModule-v1.1.0%20or%20later-blue.svg)
 
 ## Use Library
 [unity-toolbar-extender](https://github.com/marijnz/unity-toolbar-extender)

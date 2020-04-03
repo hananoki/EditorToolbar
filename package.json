@@ -1,9 +1,9 @@
 {
   "name": "com.hananoki.editor-toolbar",
   "displayName": "EditorToolbar",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "unity": "2018.3",
-  "description": "A list of frequently used functions using \"unity-toolbar-extender\"",
+  "description": "Frequently used functions are summarized in the toolbar",
   "keywords": [
     "Editor"
   ],

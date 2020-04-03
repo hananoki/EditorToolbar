@@ -11,6 +11,7 @@ using UnityEditor.SceneManagement;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityToolbarExtender;
+using Hananoki.Extensions;
 
 using E = Hananoki.EditorToolbar.SettingsEditor;
 using P = Hananoki.EditorToolbar.SettingsProject;
@@ -220,7 +221,7 @@ namespace Hananoki.EditorToolbar {
 				m.AddItem( new GUIContent( S._Editor ), false, () => UnityEditorMenu.Edit_Project_Settings_Editor() );
 				m.AddItem( new GUIContent( S._ScriptExecutionOrder ), false, () => UnityEditorMenu.Edit_Project_Settings_Script_Execution_Order() );
 #endif
-				m.DropDown( EditorHelper.PopupRect( GUILayoutUtility.GetLastRect() ) );
+				m.DropDown( GUILayoutUtility.GetLastRect().PopupRect() );
 				Event.current.Use();
 			}
 
@@ -229,7 +230,7 @@ namespace Hananoki.EditorToolbar {
 
 
 		static void Button_Platform() {
-			var cont = EditorHelper.TempContent( Array.Find( s_buildTargetInfo, x => x.group == UEditorUserBuildSettings.activeBuildTargetGroup ).icon, S._OpenBuildSettings );
+			var cont = EditorHelper.TempContent( Array.Find( s_buildTargetInfo, x => x.group == UnityEditorUserBuildSettings.activeBuildTargetGroup ).icon, S._OpenBuildSettings );
 
 			Rect r = GUILayoutUtility.GetRect( cont, s_styles.DropDownButton, GUILayout.Width( 50 ) );
 			Rect rr = r;
@@ -241,9 +242,9 @@ namespace Hananoki.EditorToolbar {
 				m.AddDisabledItem( "SwitchPlatform" );
 				m.AddSeparator( "" );
 				foreach( var e in s_buildTargetInfo ) {
-					m.AddItem( e.group.GetShortName(), UEditorUserBuildSettings.activeBuildTargetGroup == e.group, CallbackEventOnSwitchPlatform, e.group );
+					m.AddItem( e.group.GetShortName(), UnityEditorUserBuildSettings.activeBuildTargetGroup == e.group, CallbackEventOnSwitchPlatform, e.group );
 				}
-				m.DropDown( EditorHelper.PopupRect( r ) );
+				m.DropDown( r.PopupRect() );
 				Event.current.Use();
 			}
 			if( GUI.Button( r, cont, s_styles.DropDownButton ) ) {
@@ -284,7 +285,7 @@ namespace Hananoki.EditorToolbar {
 				else {
 					m.AddDisabledItem( S._OpenOutputFolder );
 				}
-				m.DropDown( EditorHelper.PopupRect( r ) );
+				m.DropDown( r.PopupRect() );
 				Event.current.Use();
 			}
 
@@ -363,7 +364,7 @@ namespace Hananoki.EditorToolbar {
 				else {
 					m.AddDisabledItem( S._Therearenoscenesregisteredinthebuildsettings );
 				}
-				m.DropDown( EditorHelper.PopupRect( GUILayoutUtility.GetLastRect() ) );
+				m.DropDown( GUILayoutUtility.GetLastRect().PopupRect() );
 				Event.current.Use();
 			}
 
