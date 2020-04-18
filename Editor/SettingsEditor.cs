@@ -38,6 +38,7 @@ namespace Hananoki.EditorToolbar {
 
 	public class SettingsEditorWindow : HSettingsEditorWindow {
 
+		static Vector2 scrollPos;
 
 		public static void Open() {
 			var window = GetWindow<SettingsEditorWindow>();
@@ -55,7 +56,7 @@ namespace Hananoki.EditorToolbar {
 		/// 
 		/// </summary>
 		static void DrawGUI() {
-			using( new PreferenceLayoutScope() ) {
+			using( new PreferenceLayoutScope( ref scrollPos ) ) {
 				EditorGUI.BeginChangeCheck();
 				E.i.enableProjectSettingsProvider = HEditorGUILayout.ToggleLeft( S._ProjectSettingsProvider, E.i.enableProjectSettingsProvider );
 				E.i.iconOpenCSProject = HEditorGUILayout.GUIDObjectField<Texture2D>( nameof( E.i.iconOpenCSProject ).nicify(), E.i.iconOpenCSProject );

@@ -26,11 +26,10 @@
 ```
 
 ## Requirement
-![](https://img.shields.io/badge/SharedModule-v1.1.0%20or%20later-blue.svg)
+![](https://img.shields.io/badge/SharedModule-v1.2.0%20or%20later-blue.svg)
 
 ## Use Library
 [unity-toolbar-extender](https://github.com/marijnz/unity-toolbar-extender)
 
 ## Licence
-
 [MIT](https://github.com/hananoki/EditorToolbar/blob/master/LICENSE.md)
