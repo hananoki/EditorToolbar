@@ -1,18 +1,14 @@
-﻿using Hananoki;
-using Hananoki.SharedModule;
+﻿using Hananoki.Extensions;
 using Hananoki.Reflection;
-using Hananoki;
+using Hananoki.SharedModule;
 using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Reflection;
 using UnityEditor;
 using UnityEditor.SceneManagement;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityToolbarExtender;
-using Hananoki.Extensions;
-
 using E = Hananoki.EditorToolbar.SettingsEditor;
 using P = Hananoki.EditorToolbar.SettingsProject;
 

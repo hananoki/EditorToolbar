@@ -1,5 +1,11 @@
 # EditorToolbar
 
+## [1.0.3] - 2020-05-31
+
+### Changed
+- Set "Auto Referenced" of asmdef to false
+- Refactoring of using
+
 ## [1.0.2] - 2020-04-18
 - SharedModule v1.2.0 is supported
 
