@@ -3,86 +3,66 @@ using System.Collections.Generic;
 using System.Reflection;
 using UnityEditor;
 using UnityEngine;
+using Hananoki;
 
-namespace UnityToolbarExtender
-{
+namespace UnityToolbarExtender {
 	[InitializeOnLoad]
-	public static class ToolbarExtender
-	{
+	public static class ToolbarExtender {
 		static int m_toolCount;
 		static GUIStyle m_commandStyle = null;
 
 		public static readonly List<Action> LeftToolbarGUI = new List<Action>();
 		public static readonly List<Action> RightToolbarGUI = new List<Action>();
 
-		public static bool IsDefine( string symbol ) {
-			foreach( var s in EditorUserBuildSettings.activeScriptCompilationDefines ) {
-				if( symbol == s ) return true;
+
+		static ToolbarExtender() {
+			Type toolbarType = typeof( Editor ).Assembly.GetType( "UnityEditor.Toolbar" );
+
+			string fieldName;
+			if( UnitySymbol.Has( "UNITY_2019_1_OR_NEWER" ) ) {
+				fieldName = "k_ToolCount";
 			}
-			return false;
+			else {
+				fieldName = "s_ShownToolIcons";
+			}
 
-		}
+			FieldInfo toolIcons = toolbarType.GetField( fieldName, BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Static );
 
-		static ToolbarExtender()
-		{
-			Type toolbarType = typeof(Editor).Assembly.GetType("UnityEditor.Toolbar");
-			
-#if UNITY_2019_1_OR_NEWER
-			string fieldName = "k_ToolCount";
-#else
-			string fieldName = "s_ShownToolIcons";
-#endif
-			
-			FieldInfo toolIcons = toolbarType.GetField(fieldName,
-				BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Static);
-
-			if( IsDefine( "UNITY_2019_1_OR_NEWER" ) ) {
-				//Debug.Log( "UNITY_2019_1_OR_NEWER" );
+			if( UnitySymbol.Has( "UNITY_2019_1_OR_NEWER" ) ) {
 				m_toolCount = toolIcons != null ? ( (int) toolIcons.GetValue( null ) ) : 7;
 			}
-			else if( IsDefine( "UNITY_2018_1_OR_NEWER" ) ) {
-				//Debug.Log( "UNITY_2018_1_OR_NEWER" );
+			else if( UnitySymbol.Has( "UNITY_2018_1_OR_NEWER" ) ) {
 				m_toolCount = toolIcons != null ? ( (Array) toolIcons.GetValue( null ) ).Length : 6;
 			}
 			else {
-				//Debug.Log( "UNITY_2017" );
 				m_toolCount = toolIcons != null ? ( (Array) toolIcons.GetValue( null ) ).Length : 5;
 			}
-//#if UNITY_2019_1_OR_NEWER
-//			m_toolCount = toolIcons != null ? ((int) toolIcons.GetValue(null)) : 7;
-//#elif UNITY_2018_1_OR_NEWER
-//			m_toolCount = toolIcons != null ? ((Array) toolIcons.GetValue(null)).Length : 6;
-//#else
-//			m_toolCount = toolIcons != null ? ((Array) toolIcons.GetValue(null)).Length : 5;
-//#endif
-	
+
 			ToolbarCallback.OnToolbarGUI -= OnGUI;
 			ToolbarCallback.OnToolbarGUI += OnGUI;
 		}
 
-		static void OnGUI()
-		{
+		static void OnGUI() {
 			// Create two containers, left and right
 			// Screen is whole toolbar
 
-			if (m_commandStyle == null)
-			{
-				m_commandStyle = new GUIStyle("CommandLeft");
+			if( m_commandStyle == null ) {
+				m_commandStyle = new GUIStyle( "CommandLeft" );
 			}
 
 			var screenWidth = EditorGUIUtility.currentViewWidth;
 
 			// Following calculations match code reflected from Toolbar.OldOnGUI()
-			float playButtonsPosition = (screenWidth - 100) / 2;
+			float playButtonsPosition = ( screenWidth - 100 ) / 2;
 
-			Rect leftRect = new Rect(0, 0, screenWidth, Screen.height);
+			Rect leftRect = new Rect( 0, 0, screenWidth, Screen.height );
 			leftRect.xMin += 10; // Spacing left
 			leftRect.xMin += 32 * m_toolCount; // Tool buttons
 			leftRect.xMin += 20; // Spacing between tools and pivot
 			leftRect.xMin += 64 * 2; // Pivot buttons
 			leftRect.xMax = playButtonsPosition;
 
-			Rect rightRect = new Rect(0, 0, screenWidth, Screen.height);
+			Rect rightRect = new Rect( 0, 0, screenWidth, Screen.height );
 			rightRect.xMin = playButtonsPosition;
 			rightRect.xMin += m_commandStyle.fixedWidth * 3; // Play buttons
 			rightRect.xMax = screenWidth;
@@ -105,21 +85,19 @@ namespace UnityToolbarExtender
 
 			// Add top and bottom margins
 			float rectY = 5;
-#if UNITY_2019_3_OR_NEWER
-			rectY = 4;
-#endif
+			if( UnitySymbol.Has( "UNITY_2019_3_OR_NEWER" ) ) {
+				rectY = 4;
+			}
 			leftRect.y = rectY;
 			leftRect.height = 24;
 
 			rightRect.y = rectY;
 			rightRect.height = 24;
 
-			if (leftRect.width > 0)
-			{
-				GUILayout.BeginArea(leftRect);
+			if( leftRect.width > 0 ) {
+				GUILayout.BeginArea( leftRect );
 				GUILayout.BeginHorizontal();
-				foreach (var handler in LeftToolbarGUI)
-				{
+				foreach( var handler in LeftToolbarGUI ) {
 					handler();
 				}
 
@@ -127,15 +105,13 @@ namespace UnityToolbarExtender
 				GUILayout.EndArea();
 			}
 
-			if (rightRect.width > 0)
-			{
-#if UNITY_2019_1_OR_NEWER
-				rightRect.x -= 20;
-#endif
-				GUILayout.BeginArea(rightRect);
+			if( rightRect.width > 0 ) {
+				if( UnitySymbol.Has( "UNITY_2019_1_OR_NEWER" ) ) {
+					rightRect.x -= 20;
+				}
+				GUILayout.BeginArea( rightRect );
 				GUILayout.BeginHorizontal();
-				foreach (var handler in RightToolbarGUI)
-				{
+				foreach( var handler in RightToolbarGUI ) {
 					handler();
 				}
 

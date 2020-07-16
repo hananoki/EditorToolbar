@@ -39,11 +39,7 @@ namespace Hananoki.EditorToolbar {
 			public GUIStyle Button2;
 			public GUIStyle toggle;
 
-			public Texture2D IconSceneAsset;
-			public Texture2D IconRefresh;
-			public Texture2D IconSettings;
 			public Texture2D IconCS;
-			public Texture2D IconAssetStore;
 
 			public float IconButtonSize;
 
@@ -54,20 +50,11 @@ namespace Hananoki.EditorToolbar {
 
 			public Styles() {
 				IconButtonSize = 30;
-#if UNITY_2019_3_OR_NEWER
-				IconButtonSize = 32;
-#endif
-				IconSceneAsset = Icon.Get( "SceneAsset Icon" );
-				IconRefresh = Icon.Get( "Refresh" );
+				if( UnitySymbol.Has( "UNITY_2019_3_OR_NEWER" ) ) {
+					IconButtonSize = 32;
+				}
 
-#if UNITY_2018_3_OR_NEWER
-				IconSettings = Icon.Get( "Settings" );
-#else
-				IconSettings = Shared.Icon.Get( "Settings" );
-#endif
-				LoadProjectIcon();
-				//IconSceneViewFx = Shared.Icon.Get( "SceneViewFx" );
-				IconAssetStore = Icon.Get( "Asset Store" );
+				LoadProjectIcon();;
 
 
 				ButtonLeft = new GUIStyle( "ButtonLeft" );
@@ -80,30 +67,32 @@ namespace Hananoki.EditorToolbar {
 				ButtonRight = new GUIStyle( "ButtonRight" );
 				ButtonRight.padding = r;
 
-#if UNITY_2019_3_OR_NEWER
-				Button = new GUIStyle( "AppCommand" );
-				Button.margin = new RectOffset( 3, 3, 2, 2 );
-				Button.imagePosition = ImagePosition.ImageLeft;
-				Button.fixedWidth = 0;
-#else
-				Button = new GUIStyle( "button" );
-				Button.fixedHeight = 18;
-#endif
+				if( UnitySymbol.Has( "UNITY_2019_3_OR_NEWER" ) ) {
+					Button = new GUIStyle( "AppCommand" );
+					Button.margin = new RectOffset( 3, 3, 2, 2 );
+					Button.imagePosition = ImagePosition.ImageLeft;
+					Button.fixedWidth = 0;
+				}
+				else {
+					Button = new GUIStyle( "button" );
+					Button.fixedHeight = 18;
+				}
 				Button.padding = r;
 				Button.alignment = TextAnchor.MiddleCenter;
 
 
-#if UNITY_2019_3_OR_NEWER
-				Button2 = new GUIStyle( "AppCommand" );
-				Button2.margin = new RectOffset( 3, 3, 2, 2 );
-				Button2.imagePosition = ImagePosition.ImageLeft;
-				Button2.fixedWidth = 0;
-				Button2.padding = new RectOffset( 4, 4, 3, 3 );
-#else
-				Button2 = new GUIStyle( "button" );
-				Button2.fixedHeight = 18;
-				Button2.padding = EditorStyles.label.padding;
-#endif
+				if( UnitySymbol.Has( "UNITY_2019_3_OR_NEWER" ) ) {
+					Button2 = new GUIStyle( "AppCommand" );
+					Button2.margin = new RectOffset( 3, 3, 2, 2 );
+					Button2.imagePosition = ImagePosition.ImageLeft;
+					Button2.fixedWidth = 0;
+					Button2.padding = new RectOffset( 4, 4, 3, 3 );
+				}
+				else {
+					Button2 = new GUIStyle( "button" );
+					Button2.fixedHeight = 18;
+					Button2.padding = EditorStyles.label.padding;
+				}
 
 				//Button2.margin = EditorStyles.label.margin;
 
@@ -117,19 +106,20 @@ namespace Hananoki.EditorToolbar {
 				DropDown2.padding = new RectOffset( DropDown2.padding.left, DropDown2.padding.right, 0, 0 );
 				DropDown2.alignment = TextAnchor.MiddleCenter;
 
-#if UNITY_2019_3_OR_NEWER
-				DropDownButton = new GUIStyle( "DropDown" );
-				//DropDownButton.padding = new RectOffset( DropDownButton.padding.left, DropDownButton.padding.right, 0, 0 );
-#else
-				DropDownButton = new GUIStyle( "DropDownButton" );
-				DropDownButton.padding = new RectOffset( 6, DropDownButton.padding.right, 2, 2 );
-				DropDownButton.fixedHeight = 18;
-#endif
+				if( UnitySymbol.Has( "UNITY_2019_3_OR_NEWER" ) ) {
+					DropDownButton = new GUIStyle( "DropDown" );
+					//DropDownButton.padding = new RectOffset( DropDownButton.padding.left, DropDownButton.padding.right, 0, 0 );
+				}
+				else {
+					DropDownButton = new GUIStyle( "DropDownButton" );
+					DropDownButton.padding = new RectOffset( 6, DropDownButton.padding.right, 2, 2 );
+					DropDownButton.fixedHeight = 18;
+				}
 
 				toggle = new GUIStyle( EditorStyles.toggle );
-#if UNITY_2019_3_OR_NEWER
-				toggle.margin.top = 5;
-#endif
+				if( UnitySymbol.Has( "UNITY_2019_3_OR_NEWER" ) ) {
+					toggle.margin.top = 5;
+				}
 			}
 		}
 
@@ -148,10 +138,9 @@ namespace Hananoki.EditorToolbar {
 				lst.Add( new BuildTargetInfo( p, p.Icon() ) );
 			}
 
-#if UNITY_2019_3_OR_NEWER
-#else
-			lst.Add( new BuildTargetInfo( BuildTargetGroup.Facebook, Icon.Get( "BuildSettings.Facebook" ) ) );
-#endif
+			if( !UnitySymbol.Has( "UNITY_2019_3_OR_NEWER" ) ) {
+				lst.Add( new BuildTargetInfo( BuildTargetGroup.Facebook, Icon.Get( "BuildSettings.Facebook" ) ) );
+			}
 			s_buildTargetInfo = lst.ToArray();
 
 			ToolbarExtender.LeftToolbarGUI.Add( OnLeftToolbarGUI );
@@ -193,30 +182,31 @@ namespace Hananoki.EditorToolbar {
 
 
 		static void Button_Setting() {
-			var cont = EditorHelper.TempContent( s_styles.IconSettings, S._OpenSettings );
+			var cont = EditorHelper.TempContent( EditorIcon.settings, S._OpenSettings );
 			var ssr = GUILayoutUtility.GetRect( cont, s_styles.DropDown2 );
 			ssr.width = 40;
 
 			if( EditorHelper.HasMouseClick( GUILayoutUtility.GetLastRect() ) ) {
 				var m = new GenericMenu();
 				m.AddItem( S._Preferences, false, () => UnityEditorMenu.Edit_Preferences() );
-#if UNITY_2018_3_OR_NEWER
-				m.AddItem( S._ProjectSettings, false, () => UnityEditorMenu.Edit_Project_Settings() );
-#else
-				m.AddSeparator( "" );
-				m.AddItem( new GUIContent( S._Input ), false, () => UnityEditorMenu.Edit_Project_Settings_Input() );
-				m.AddItem( new GUIContent( S._TagsandLayers ), false, () => UnityEditorMenu.Edit_Project_Settings_Tags_and_Layers() );
-				m.AddItem( new GUIContent( S._Audio ), false, () => UnityEditorMenu.Edit_Project_Settings_Audio() );
-				m.AddItem( new GUIContent( S._Time ), false, () => UnityEditorMenu.Edit_Project_Settings_Time() );
-				m.AddItem( new GUIContent( S._Player ), false, () => UnityEditorMenu.Edit_Project_Settings_Player() );
-				m.AddItem( new GUIContent( S._Physics ), false, () => UnityEditorMenu.Edit_Project_Settings_Physics() );
-				m.AddItem( new GUIContent( S._Physics2D ), false, () => UnityEditorMenu.Edit_Project_Settings_Physics_2D() );
-				m.AddItem( new GUIContent( S._Quality ), false, () => UnityEditorMenu.Edit_Project_Settings_Quality() );
-				m.AddItem( new GUIContent( S._Graphics ), false, () => UnityEditorMenu.Edit_Project_Settings_Graphics() );
-				m.AddItem( new GUIContent( S._Network ), false, () => UnityEditorMenu.Edit_Project_Settings_Network() );
-				m.AddItem( new GUIContent( S._Editor ), false, () => UnityEditorMenu.Edit_Project_Settings_Editor() );
-				m.AddItem( new GUIContent( S._ScriptExecutionOrder ), false, () => UnityEditorMenu.Edit_Project_Settings_Script_Execution_Order() );
-#endif
+				if( UnitySymbol.Has( "UNITY_2018_3_OR_NEWER" ) ) {
+					m.AddItem( S._ProjectSettings, false, () => UnityEditorMenu.Edit_Project_Settings() );
+				}
+				else {
+					m.AddSeparator( "" );
+					m.AddItem( new GUIContent( S._Input ), false, () => UnityEditorMenu.Edit_Project_Settings_Input() );
+					m.AddItem( new GUIContent( S._TagsandLayers ), false, () => UnityEditorMenu.Edit_Project_Settings_Tags_and_Layers() );
+					m.AddItem( new GUIContent( S._Audio ), false, () => UnityEditorMenu.Edit_Project_Settings_Audio() );
+					m.AddItem( new GUIContent( S._Time ), false, () => UnityEditorMenu.Edit_Project_Settings_Time() );
+					m.AddItem( new GUIContent( S._Player ), false, () => UnityEditorMenu.Edit_Project_Settings_Player() );
+					m.AddItem( new GUIContent( S._Physics ), false, () => UnityEditorMenu.Edit_Project_Settings_Physics() );
+					m.AddItem( new GUIContent( S._Physics2D ), false, () => UnityEditorMenu.Edit_Project_Settings_Physics_2D() );
+					m.AddItem( new GUIContent( S._Quality ), false, () => UnityEditorMenu.Edit_Project_Settings_Quality() );
+					m.AddItem( new GUIContent( S._Graphics ), false, () => UnityEditorMenu.Edit_Project_Settings_Graphics() );
+					m.AddItem( new GUIContent( S._Network ), false, () => UnityEditorMenu.Edit_Project_Settings_Network() );
+					m.AddItem( new GUIContent( S._Editor ), false, () => UnityEditorMenu.Edit_Project_Settings_Editor() );
+					m.AddItem( new GUIContent( S._ScriptExecutionOrder ), false, () => UnityEditorMenu.Edit_Project_Settings_Script_Execution_Order() );
+				}
 				m.DropDown( GUILayoutUtility.GetLastRect().PopupRect() );
 				Event.current.Use();
 			}
@@ -247,24 +237,24 @@ namespace Hananoki.EditorToolbar {
 				UnityEditorMenu.File_Build_Settings();
 			}
 
-#if UNITY_2019_3_OR_NEWER // DopesheetBackground
-			//EditorGUI.DrawRect( rr, new Color(0,0,1,0.2f));
-			rr.y += 3;
-			rr.height -= 6;
-			GUI.Label( rr, GUIContent.none, "DopesheetBackground" );
-#endif
+			if( UnitySymbol.Has( "UNITY_2019_3_OR_NEWER" ) ) {
+				//EditorGUI.DrawRect( rr, new Color(0,0,1,0.2f));
+				rr.y += 3;
+				rr.height -= 6;
+				GUI.Label( rr, GUIContent.none, "DopesheetBackground" );
+			}
 		}
 
 
 		static void Button_OpenCSProject() {
-			if( GUILayout.Button( EditorHelper.TempContent( s_styles.IconCS, S._OpenCSharpProject ), s_styles.Button2, GUILayout.Width( s_styles.IconButtonSize ) ) ) {
+			if( GUILayout.Button( EditorHelper.TempContent( EditorIcon.cs_script, S._OpenCSharpProject ), s_styles.Button2, GUILayout.Width( s_styles.IconButtonSize ) ) ) {
 				EditorApplication.ExecuteMenuItem( "Assets/Open C# Project" );
 			}
 		}
 
 
 		static void Button_ScreenShot() {
-			var cont = EditorHelper.TempContent( Shared.Icon.Get( "$SceneViewFx" ), S._GameViewScreenShot );
+			var cont = EditorHelper.TempContent( EditorIcon.sceneviewfx, S._GameViewScreenShot );
 			Rect r = GUILayoutUtility.GetRect( cont, s_styles.DropDownButton, GUILayout.Width( 50 ) );
 
 			Rect rr = r;
@@ -289,16 +279,16 @@ namespace Hananoki.EditorToolbar {
 				EditorUtils.SaveScreenCapture();
 			}
 
-#if UNITY_2019_3_OR_NEWER
-			rr.y += 3;
-			rr.height -= 6;
-			GUI.Label( rr, GUIContent.none, "DopesheetBackground" );
-#endif
+			if( UnitySymbol.Has( "UNITY_2019_3_OR_NEWER" ) ) {
+				rr.y += 3;
+				rr.height -= 6;
+				GUI.Label( rr, GUIContent.none, "DopesheetBackground" );
+			}
 		}
 
 
 		static void Button_AssetStore() {
-			if( GUILayout.Button( EditorHelper.TempContent( s_styles.IconAssetStore, S._OpenAssetStore ), s_styles.Button, GUILayout.Width( s_styles.IconButtonSize ) ) ) {
+			if( GUILayout.Button( EditorHelper.TempContent( EditorIcon.asset_store, S._OpenAssetStore ), s_styles.Button, GUILayout.Width( s_styles.IconButtonSize ) ) ) {
 				EditorUtils.AssetStoreWindow();
 			}
 		}
@@ -312,38 +302,40 @@ namespace Hananoki.EditorToolbar {
 		static void OnLeftToolbarGUI() {
 			if( s_styles == null ) s_styles = new Styles();
 
-#if UNITY_2019_3_OR_NEWER
-#else
-			GUILayout.BeginVertical();
-			GUILayout.Space( 2 );
-			GUILayout.BeginHorizontal();
-#endif
+			if( UnitySymbol.Has( "UNITY_2019_3_OR_NEWER" ) ) {
+			}
+			else {
+				GUILayout.BeginVertical();
+				GUILayout.Space( 2 );
+				GUILayout.BeginHorizontal();
+			}
 
 			_OnLeftToolbarGUI();
 			//GUILayout.FlexibleSpace();
 			//GUILayout.Button( "aaa" );
 
-#if UNITY_2019_3_OR_NEWER
-			GUILayout.Space( 10 );
-#else
-			GUILayout.Space( 20 );
-#endif
+			if( UnitySymbol.Has( "UNITY_2019_3_OR_NEWER" ) ) {
+				GUILayout.Space( 10 );
+			}
+			else {
+				GUILayout.Space( 20 );
+			}
 
-#if UNITY_2019_3_OR_NEWER
-#else
-			GUILayout.EndHorizontal();
-			GUILayout.Space( 2 );
-			GUILayout.EndVertical();
-#endif
+			if( UnitySymbol.Has( "UNITY_2019_3_OR_NEWER" ) ) {
+			}
+			else {
+				GUILayout.EndHorizontal();
+				GUILayout.Space( 2 );
+				GUILayout.EndVertical();
+			}
 		}
-
 
 
 
 		static void _OnLeftToolbarGUI() {
 			GUILayout.FlexibleSpace();
 
-			GUILayout.Label( EditorHelper.TempContent( SceneManager.GetActiveScene().name, s_styles.IconSceneAsset ), s_styles.DropDown, GUILayout.Width( 160 ) );
+			GUILayout.Label( EditorHelper.TempContent( SceneManager.GetActiveScene().name, EditorIcon.sceneasset ), s_styles.DropDown, GUILayout.Width( 160 ) );
 			if( EditorHelper.HasMouseClick( GUILayoutUtility.GetLastRect() ) ) {
 				var m = new GenericMenu();
 				var lst = EditorHelper.GetBuildSceneNames();
@@ -364,7 +356,7 @@ namespace Hananoki.EditorToolbar {
 				Event.current.Use();
 			}
 
-			if( GUILayout.Button( EditorHelper.TempContent( s_styles.IconRefresh, S._ReloadScene ), s_styles.Button, GUILayout.Width( 30 ) ) ) {
+			if( GUILayout.Button( EditorHelper.TempContent( EditorIcon.refresh, S._ReloadScene ), s_styles.Button, GUILayout.Width( 30 ) ) ) {
 				if( Application.isPlaying ) {
 					SceneManager.LoadScene( SceneManager.GetActiveScene().name );
 				}
@@ -403,17 +395,23 @@ namespace Hananoki.EditorToolbar {
 		static void OnRightToolbarGUI() {
 			if( s_styles == null ) s_styles = new Styles();
 
-#if UNITY_2019_3_OR_NEWER
-			//GUILayout.Space( 4 );
-			EditorSettings.enterPlayModeOptionsEnabled = GUILayout.Toggle( EditorSettings.enterPlayModeOptionsEnabled, "PlayMode", s_styles.Button2 );
-#endif
+			if( UnitySymbol.Has( "UNITY_2019_3_OR_NEWER" ) ) {
+				//GUILayout.Space( 4 );
+				var prop = R.Property( "enterPlayModeOptionsEnabled", typeof( EditorSettings ) );
+				EditorGUI.BeginChangeCheck();
+				var toggle = GUILayout.Toggle( prop.Get<bool>(), "PlayMode", s_styles.Button2 );
+				if( EditorGUI.EndChangeCheck() ) {
+					prop.Set( toggle );
+				}
+			}
 
-#if UNITY_2019_3_OR_NEWER
-#else
-			GUILayout.BeginVertical();
-			GUILayout.Space( 2 );
-			GUILayout.BeginHorizontal();
-#endif
+			if( UnitySymbol.Has( "UNITY_2019_3_OR_NEWER" ) ) {
+			}
+			else {
+				GUILayout.BeginVertical();
+				GUILayout.Space( 2 );
+				GUILayout.BeginHorizontal();
+			}
 
 			Button_OpenCSProject();
 
@@ -428,12 +426,13 @@ namespace Hananoki.EditorToolbar {
 
 
 			GUILayout.FlexibleSpace();
-#if UNITY_2019_3_OR_NEWER
-#else
-			GUILayout.EndHorizontal();
-			GUILayout.Space( 2 );
-			GUILayout.EndVertical();
-#endif
+			if( UnitySymbol.Has( "UNITY_2019_3_OR_NEWER" ) ) {
+			}
+			else {
+				GUILayout.EndHorizontal();
+				GUILayout.Space( 2 );
+				GUILayout.EndVertical();
+			}
 		}
 	}
 }

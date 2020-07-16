@@ -1,5 +1,12 @@
 # EditorToolbar
 
+## [1.0.4] - 2020-07-16
+- SharedModule v1.5.0 is supported
+
+### Changed
+- Support for the new setting
+- Changed to be versioned at runtime
+
 ## [1.0.3] - 2020-05-31
 
 ### Changed

@@ -26,7 +26,7 @@
 ```
 
 ## Requirement
-![](https://img.shields.io/badge/SharedModule-v1.2.0%20or%20later-blue.svg)
+![](https://img.shields.io/badge/SharedModule-v1.5.0%20or%20later-blue.svg)
 
 ## Use Library
 [unity-toolbar-extender](https://github.com/marijnz/unity-toolbar-extender)

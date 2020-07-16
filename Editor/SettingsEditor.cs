@@ -38,16 +38,12 @@ namespace Hananoki.EditorToolbar {
 
 	public class SettingsEditorWindow : HSettingsEditorWindow {
 
-		static Vector2 scrollPos;
-
 		public static void Open() {
-			var window = GetWindow<SettingsEditorWindow>();
-			window.SetTitle( new GUIContent( Package.name, Icon.Get( "SettingsIcon" ) ) );
-		}
-
-		void OnEnable() {
-			drawGUI = DrawGUI;
-			E.Load();
+			var w = GetWindow<SettingsEditorWindow>();
+			w.SetTitle( new GUIContent( Package.name, EditorIcon.settings ) );
+			w.headerMame = Package.name;
+			w.headerVersion = Package.version;
+			w.gui = DrawGUI;
 		}
 
 
@@ -55,33 +51,32 @@ namespace Hananoki.EditorToolbar {
 		/// <summary>
 		/// 
 		/// </summary>
-		static void DrawGUI() {
-			using( new PreferenceLayoutScope( ref scrollPos ) ) {
-				EditorGUI.BeginChangeCheck();
-				E.i.enableProjectSettingsProvider = HEditorGUILayout.ToggleLeft( S._ProjectSettingsProvider, E.i.enableProjectSettingsProvider );
-				E.i.iconOpenCSProject = HEditorGUILayout.GUIDObjectField<Texture2D>( nameof( E.i.iconOpenCSProject ).nicify(), E.i.iconOpenCSProject );
+		public static void DrawGUI() {
+			E.Load();
 
-				if( EditorGUI.EndChangeCheck() ) {
-					EditorToolbar.s_styles.LoadProjectIcon();
-					EditorToolbar.Repaint();
-					E.Save();
-				}
+			EditorGUI.BeginChangeCheck();
+			E.i.enableProjectSettingsProvider = HEditorGUILayout.ToggleLeft( S._ProjectSettingsProvider, E.i.enableProjectSettingsProvider );
+			E.i.iconOpenCSProject = HEditorGUILayout.GUIDObjectField<Texture2D>( nameof( E.i.iconOpenCSProject ).nicify(), E.i.iconOpenCSProject );
 
-				if( E.i.enableProjectSettingsProvider ) return;
-
-				GUILayout.Space( 8f );
-
-				GUILayout.Label( S._ProjectSettings, "ShurikenModuleTitle" );
-#if UNITY_2018_3_OR_NEWER
-				EditorToolbarSettingsProvider.DrawGUI();
-#endif
+			if( EditorGUI.EndChangeCheck() ) {
+				EditorToolbar.s_styles.LoadProjectIcon();
+				EditorToolbar.Repaint();
+				E.Save();
 			}
+
+			if( E.i.enableProjectSettingsProvider ) return;
+
+			GUILayout.Space( 8f );
+
+			GUILayout.Label( S._ProjectSettings, "ShurikenModuleTitle" );
+#if UNITY_2018_3_OR_NEWER
+			EditorToolbarSettingsProvider.DrawGUI();
+#endif
 		}
 
 
-
+#if !ENABLE_HANANOKI_SETTINGS
 #if UNITY_2018_3_OR_NEWER && !ENABLE_LEGACY_PREFERENCE
-
 		[SettingsProvider]
 		public static SettingsProvider PreferenceView() {
 			var provider = new SettingsProvider( $"Preferences/Hananoki/{Package.name}", SettingsScope.User ) {
@@ -97,9 +92,26 @@ namespace Hananoki.EditorToolbar {
 		[PreferenceItem( Package.name )]
 		public static void PreferencesGUI() {
 #endif
-			E.Load();
-			DrawGUI();
+			using( new LayoutScope() ) DrawGUI();
+		}
+#endif
+	}
+
+
+
+#if ENABLE_HANANOKI_SETTINGS
+	[SettingsClass]
+	public class SettingsEvent {
+		[SettingsMethod]
+		public static SettingsItem Changed() {
+			return new SettingsItem() {
+				//mode = 1,
+				displayName = Package.name,
+				version = Package.version,
+				gui = SettingsEditorWindow.DrawGUI,
+			};
 		}
 	}
+#endif
 }
 
