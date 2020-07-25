@@ -21,6 +21,9 @@ namespace UnityToolbarExtender {
 
 		static Type _VisualElement;
 
+		static Type m_iWindowBackendType;
+		static PropertyInfo m_windowBackend;
+
 		///// <summary>
 		/// Callback for toolbar OnGUI method.
 		/// </summary>
@@ -30,7 +33,16 @@ namespace UnityToolbarExtender {
 			string tname = string.Empty;
 			m_toolbarType = typeof( Editor ).Assembly.GetType( "UnityEditor.Toolbar" );
 			m_guiViewType = typeof( Editor ).Assembly.GetType( "UnityEditor.GUIView" );
-			m_viewVisualTree = m_guiViewType.GetProperty( "visualTree", BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance );
+
+
+			if( UnitySymbol.Has( "UNITY_2020_1_OR_NEWER" ) ) {
+				m_iWindowBackendType = typeof( Editor ).Assembly.GetType( "UnityEditor.IWindowBackend" );
+				m_windowBackend = m_guiViewType.GetProperty( "windowBackend", BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance );
+				m_viewVisualTree = m_iWindowBackendType.GetProperty( "visualTree", BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance );
+			}
+			else {
+				m_viewVisualTree = m_guiViewType.GetProperty( "visualTree", BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance );
+			}
 
 			if( UnitySymbol.Has( "UNITY_2019_1_OR_NEWER" ) ) {
 				tname = "UnityEngine.UIElements";
@@ -65,8 +77,14 @@ namespace UnityToolbarExtender {
 					// Get it's visual tree
 					var pi = _VisualElement.GetProperty( "Item", BindingFlags.Public | BindingFlags.Instance );
 
-					var visualTree = /*(VisualElement)*/ m_viewVisualTree.GetValue( m_currentToolbar, null );
-
+					object visualTree;
+					if( UnitySymbol.Has( "UNITY_2020_1_OR_NEWER" ) ) {
+						var windowBackend = m_windowBackend.GetValue( m_currentToolbar );
+						visualTree = /*(VisualElement)*/ m_viewVisualTree.GetValue( windowBackend, null );
+					}
+					else {
+						visualTree = /*(VisualElement)*/ m_viewVisualTree.GetValue( m_currentToolbar, null );
+					}
 					// Get first child which 'happens' to be toolbar IMGUIContainer
 					//var container = (IMGUIContainer) visualTree[ 0 ];
 					var container = pi.GetValue( visualTree, new object[] { 0 } );
