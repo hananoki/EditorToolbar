@@ -1,5 +1,13 @@
 # EditorToolbar
 
+## [1.0.6] - 2020-08-02
+
+### Added
+- Added setting menu
+
+### Changed
+- Changed dependencies in package.json
+
 ## [1.0.5] - 2020-07-25
 - 2020.1 support.
 

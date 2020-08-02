@@ -207,6 +207,10 @@ namespace Hananoki.EditorToolbar {
 					m.AddItem( new GUIContent( S._Editor ), false, () => UnityEditorMenu.Edit_Project_Settings_Editor() );
 					m.AddItem( new GUIContent( S._ScriptExecutionOrder ), false, () => UnityEditorMenu.Edit_Project_Settings_Script_Execution_Order() );
 				}
+				if( EditorHelper.IsDefine( "ENABLE_HANANOKI_SETTINGS" ) ) {
+					m.AddSeparator( "" );
+					m.AddItem( new GUIContent( "Hananoki-Settings" ), false, () => UnityEditorMenu.Window_Hananoki_Settings() );
+				}
 				m.DropDown( GUILayoutUtility.GetLastRect().PopupRect() );
 				Event.current.Use();
 			}
