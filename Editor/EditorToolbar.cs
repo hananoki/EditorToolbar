@@ -54,7 +54,7 @@ namespace Hananoki.EditorToolbar {
 					IconButtonSize = 32;
 				}
 
-				LoadProjectIcon();;
+				LoadProjectIcon();
 
 
 				ButtonLeft = new GUIStyle( "ButtonLeft" );
@@ -130,6 +130,7 @@ namespace Hananoki.EditorToolbar {
 
 		static List<Action> addon;
 
+		static bool m_lockReloadAssemblies;
 
 		static EditorToolbar() {
 			E.Load();
@@ -398,6 +399,20 @@ namespace Hananoki.EditorToolbar {
 		/// </summary>
 		static void OnRightToolbarGUI() {
 			if( s_styles == null ) s_styles = new Styles();
+
+			EditorGUI.BeginChangeCheck();
+			m_lockReloadAssemblies = GUILayout.Toggle( m_lockReloadAssemblies, EditorIcon.assemblylock, s_styles.Button2, GUILayout.Width( s_styles.IconButtonSize ) );
+			if( EditorGUI.EndChangeCheck() ) {
+				if( m_lockReloadAssemblies ) {
+					//AssetDatabase.StartAssetEditing();
+					EditorApplication.LockReloadAssemblies();
+				}
+				else {
+					EditorApplication.UnlockReloadAssemblies();
+					//AssetDatabase.StopAssetEditing();
+					AssetDatabase.Refresh();
+				}
+			}
 
 			if( UnitySymbol.Has( "UNITY_2019_3_OR_NEWER" ) ) {
 				//GUILayout.Space( 4 );

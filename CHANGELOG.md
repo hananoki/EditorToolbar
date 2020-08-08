@@ -1,5 +1,13 @@
 # EditorToolbar
 
+## [1.0.7] - 2020-08-08
+
+### Required
+- SharedModule v1.5.4 or later
+
+### Added
+- Added LockReloadAssemblies button
+
 ## [1.0.6] - 2020-08-02
 
 ### Added
