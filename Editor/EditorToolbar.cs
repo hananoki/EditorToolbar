@@ -1,4 +1,5 @@
-﻿using Hananoki.Extensions;
+﻿#pragma warning disable 618
+using Hananoki.Extensions;
 using Hananoki.Reflection;
 using Hananoki.SharedModule;
 using System;
@@ -294,7 +295,7 @@ namespace Hananoki.EditorToolbar {
 
 		static void Button_AssetStore() {
 			if( GUILayout.Button( EditorHelper.TempContent( EditorIcon.asset_store, S._OpenAssetStore ), s_styles.Button, GUILayout.Width( s_styles.IconButtonSize ) ) ) {
-				EditorUtils.AssetStoreWindow();
+				HEditorWindow.ShowWindow( UnityTypes.AssetStoreWindow );
 			}
 		}
 

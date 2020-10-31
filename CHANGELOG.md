@@ -1,5 +1,8 @@
 # EditorToolbar
 
+## [1.0.8] - 2020-11-01
+- SharedModule v1.5.8 or later
+
 ## [1.0.7] - 2020-08-08
 
 ### Required
