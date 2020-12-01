@@ -1,4 +1,5 @@
 ﻿#pragma warning disable 618
+
 using Hananoki.Extensions;
 using Hananoki.Reflection;
 using Hananoki.SharedModule;
@@ -10,8 +11,11 @@ using UnityEditor.SceneManagement;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityToolbarExtender;
+
 using E = Hananoki.EditorToolbar.SettingsEditor;
 using P = Hananoki.EditorToolbar.SettingsProject;
+using EE = Hananoki.SharedModule.SettingsEditor;
+using UnityEditorEditorUserBuildSettings = UnityReflection.UnityEditorEditorUserBuildSettings;
 
 namespace Hananoki.EditorToolbar {
 
@@ -45,7 +49,7 @@ namespace Hananoki.EditorToolbar {
 			public float IconButtonSize;
 
 			public void LoadProjectIcon() {
-				var ico = GUIDUtils.LoadAssetAtGUID<Texture2D>( E.i.iconOpenCSProject );
+				var ico = AssetDatabaseUtils.LoadAssetAtGUID<Texture2D>( E.i.iconOpenCSProject );
 				IconCS = ico ?? Icon.Get( "dll Script Icon" );
 			}
 
@@ -136,6 +140,7 @@ namespace Hananoki.EditorToolbar {
 		static EditorToolbar() {
 			E.Load();
 			var lst = new List<BuildTargetInfo>();
+
 			foreach( var p in PlatformUtils.GetSupportList() ) {
 				lst.Add( new BuildTargetInfo( p, p.Icon() ) );
 			}
@@ -222,7 +227,7 @@ namespace Hananoki.EditorToolbar {
 
 
 		static void Button_Platform() {
-			var cont = EditorHelper.TempContent( Array.Find( s_buildTargetInfo, x => x.group == UnityEditorUserBuildSettings.activeBuildTargetGroup ).icon, S._OpenBuildSettings );
+			var cont = EditorHelper.TempContent( Array.Find( s_buildTargetInfo, x => x.group == UnityEditorEditorUserBuildSettings.activeBuildTargetGroup ).icon, S._OpenBuildSettings );
 
 			Rect r = GUILayoutUtility.GetRect( cont, s_styles.DropDownButton, GUILayout.Width( 50 ) );
 			Rect rr = r;
@@ -234,7 +239,7 @@ namespace Hananoki.EditorToolbar {
 				m.AddDisabledItem( "SwitchPlatform" );
 				m.AddSeparator( "" );
 				foreach( var e in s_buildTargetInfo ) {
-					m.AddItem( e.group.GetShortName(), UnityEditorUserBuildSettings.activeBuildTargetGroup == e.group, CallbackEventOnSwitchPlatform, e.group );
+					m.AddItem( e.group.GetShortName(), UnityEditorEditorUserBuildSettings.activeBuildTargetGroup == e.group, CallbackEventOnSwitchPlatform, e.group );
 				}
 				m.DropDown( r.PopupRect() );
 				Event.current.Use();
@@ -271,7 +276,7 @@ namespace Hananoki.EditorToolbar {
 				var dname = Directory.GetCurrentDirectory() + "/ScreenShot";
 				if( Directory.Exists( dname ) ) {
 					m.AddItem( S._OpenOutputFolder, false, () => {
-						EditorUtils.ShellOpenDirectory( dname );
+						ShellUtils.OpenDirectory( dname );
 					} );
 				}
 				else {
@@ -282,7 +287,7 @@ namespace Hananoki.EditorToolbar {
 			}
 
 			if( GUI.Button( r, cont, s_styles.DropDownButton ) ) {
-				EditorUtils.SaveScreenCapture();
+				EditorHelper.SaveScreenCapture();
 			}
 
 			if( UnitySymbol.Has( "UNITY_2019_3_OR_NEWER" ) ) {
@@ -295,7 +300,7 @@ namespace Hananoki.EditorToolbar {
 
 		static void Button_AssetStore() {
 			if( GUILayout.Button( EditorHelper.TempContent( EditorIcon.asset_store, S._OpenAssetStore ), s_styles.Button, GUILayout.Width( s_styles.IconButtonSize ) ) ) {
-				HEditorWindow.ShowWindow( UnityTypes.AssetStoreWindow );
+				HEditorWindow.ShowWindow( UnityTypes.UnityEditor_AssetStoreWindow, EE.IsUtilityWindow( UnityTypes.UnityEditor_AssetStoreWindow ) );
 			}
 		}
 
@@ -348,7 +353,7 @@ namespace Hananoki.EditorToolbar {
 				if( 0 < lst.Length ) {
 					foreach( var path in lst ) {
 						if( File.Exists( path ) ) {
-							m.AddItem( path.FileNameWithoutExtension(), false, obj => EditorHelper.OpenScene( obj.ToCast<string>() ), path );
+							m.AddItem( path.FileNameWithoutExtension(), false, obj => EditorHelper.OpenScene( (string) obj ), path );
 						}
 						else {
 							m.AddDisabledItem( $"{path.FileNameWithoutExtension()} : {S._Filenotfound}" );

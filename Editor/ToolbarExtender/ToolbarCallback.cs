@@ -44,15 +44,9 @@ namespace UnityToolbarExtender {
 				m_viewVisualTree = m_guiViewType.GetProperty( "visualTree", BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance );
 			}
 
-			if( UnitySymbol.Has( "UNITY_2019_1_OR_NEWER" ) ) {
-				tname = "UnityEngine.UIElements";
-			}
-			else {
-				tname = "UnityEngine.Experimental.UIElements";
-			}
-			var _IMGUIContainer = R.Type( $"{tname}.IMGUIContainer", "UnityEngine.dll" );
+			var _IMGUIContainer = UnityTypes.UnityEngine_UIElements_IMGUIContainer;
 			m_imguiContainerOnGui = _IMGUIContainer.Field( "m_OnGUIHandler" );
-			_VisualElement = R.Type( $"{tname}.VisualElement", "UnityEngine.dll" );
+			_VisualElement = UnityTypes.UnityEngine_UIElements_VisualElement;
 
 			EditorApplication.update -= OnUpdate;
 			EditorApplication.update += OnUpdate;
