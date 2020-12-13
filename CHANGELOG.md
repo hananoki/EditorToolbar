@@ -1,4 +1,11 @@
-# EditorToolbar
+# Editor Toolbar
+
+## [1.0.10] - 2020-12-13
+- SharedModule v1.7.3 or later
+
+### Changed
+- Changed namespace
+- Refactored ToolbarCallback.cs
 
 ## [1.0.9] - 2020-12-02
 - SharedModule v1.7.0 or later

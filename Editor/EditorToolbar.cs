@@ -1,8 +1,7 @@
 ﻿#pragma warning disable 618
 
-using Hananoki.Extensions;
-using Hananoki.Reflection;
-using Hananoki.SharedModule;
+using HananokiEditor.Extensions;
+using HananokiEditor.SharedModule;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -12,12 +11,12 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityToolbarExtender;
 
-using E = Hananoki.EditorToolbar.SettingsEditor;
-using P = Hananoki.EditorToolbar.SettingsProject;
-using EE = Hananoki.SharedModule.SettingsEditor;
+using E = HananokiEditor.EditorToolbar.SettingsEditor;
+using P = HananokiEditor.EditorToolbar.SettingsProject;
+using EE = HananokiEditor.SharedModule.SettingsEditor;
 using UnityEditorEditorUserBuildSettings = UnityReflection.UnityEditorEditorUserBuildSettings;
 
-namespace Hananoki.EditorToolbar {
+namespace HananokiEditor.EditorToolbar {
 
 	[InitializeOnLoad]
 	public class EditorToolbar {
@@ -168,13 +167,16 @@ namespace Hananoki.EditorToolbar {
 		/// <returns></returns>
 		public static void MakeMenuCommand() {
 			addon = new List<Action>();
-			foreach( var p in P.i.reg ) {
-
-				var lst = R.Methods( typeof( EditorToolbarMethod ), p.className, p.assemblyName );
-				foreach( var pp in lst ) {
-					addon.Add( (Action) Delegate.CreateDelegate( typeof( Action ), null, pp ) );
-				}
+			foreach( var pp in AssemblieUtils.GetAllMethodsWithAttribute<EditorToolbarMethod>() ) {
+				addon.Add( (Action) Delegate.CreateDelegate( typeof( Action ), null, pp ) );
 			}
+			//foreach( var p in P.i.reg ) {
+
+			//	var lst = R.Methods( typeof( EditorToolbarMethod ), p.className, p.assemblyName );
+			//	foreach( var pp in lst ) {
+			//		addon.Add( (Action) Delegate.CreateDelegate( typeof( Action ), null, pp ) );
+			//	}
+			//}
 			Repaint();
 		}
 
@@ -214,10 +216,10 @@ namespace Hananoki.EditorToolbar {
 					m.AddItem( new GUIContent( S._Editor ), false, () => UnityEditorMenu.Edit_Project_Settings_Editor() );
 					m.AddItem( new GUIContent( S._ScriptExecutionOrder ), false, () => UnityEditorMenu.Edit_Project_Settings_Script_Execution_Order() );
 				}
-				if( EditorHelper.IsDefine( "ENABLE_HANANOKI_SETTINGS" ) ) {
+				//if( EditorHelper.IsDefine( "ENABLE_HANANOKI_SETTINGS" ) ) {
 					m.AddSeparator( "" );
 					m.AddItem( new GUIContent( "Hananoki-Settings" ), false, () => UnityEditorMenu.Window_Hananoki_Settings() );
-				}
+				//}
 				m.DropDown( GUILayoutUtility.GetLastRect().PopupRect() );
 				Event.current.Use();
 			}
@@ -410,13 +412,13 @@ namespace Hananoki.EditorToolbar {
 			m_lockReloadAssemblies = GUILayout.Toggle( m_lockReloadAssemblies, EditorIcon.assemblylock, s_styles.Button2, GUILayout.Width( s_styles.IconButtonSize ) );
 			if( EditorGUI.EndChangeCheck() ) {
 				if( m_lockReloadAssemblies ) {
-					//AssetDatabase.StartAssetEditing();
 					EditorApplication.LockReloadAssemblies();
+					EditorHelper.ShowMessagePop( "Lock Reload Assemblies" );
 				}
 				else {
 					EditorApplication.UnlockReloadAssemblies();
-					//AssetDatabase.StopAssetEditing();
 					AssetDatabase.Refresh();
+					EditorHelper.ShowMessagePop( "Unlock Reload Assemblies" );
 				}
 			}
 
@@ -429,6 +431,7 @@ namespace Hananoki.EditorToolbar {
 					prop.Set( toggle );
 				}
 			}
+
 
 			if( UnitySymbol.Has( "UNITY_2019_3_OR_NEWER" ) ) {
 			}

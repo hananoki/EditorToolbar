@@ -1,7 +1,7 @@
 ﻿
 using System;
 
-namespace Hananoki.EditorToolbar {
+namespace HananokiEditor.EditorToolbar {
 	[AttributeUsage( AttributeTargets.Class )]
 	public class EditorToolbarClass : Attribute {
 	}

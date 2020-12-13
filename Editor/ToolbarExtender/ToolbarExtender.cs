@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Reflection;
 using UnityEditor;
 using UnityEngine;
-using Hananoki;
+using HananokiEditor;
 
 namespace UnityToolbarExtender {
 	[InitializeOnLoad]
@@ -16,7 +16,7 @@ namespace UnityToolbarExtender {
 
 
 		static ToolbarExtender() {
-			Type toolbarType = typeof( Editor ).Assembly.GetType( "UnityEditor.Toolbar" );
+			//Type toolbarType = typeof( Editor ).Assembly.GetType( "UnityEditor.Toolbar" );
 
 			string fieldName;
 			if( UnitySymbol.Has( "UNITY_2019_1_OR_NEWER" ) ) {
@@ -26,7 +26,7 @@ namespace UnityToolbarExtender {
 				fieldName = "s_ShownToolIcons";
 			}
 
-			FieldInfo toolIcons = toolbarType.GetField( fieldName, BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Static );
+			var toolIcons = UnityTypes.UnityEditor_Toolbar.GetField( fieldName, BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Static );
 
 			if( UnitySymbol.Has( "UNITY_2019_1_OR_NEWER" ) ) {
 				m_toolCount = toolIcons != null ? ( (int) toolIcons.GetValue( null ) ) : 7;
@@ -41,6 +41,7 @@ namespace UnityToolbarExtender {
 			ToolbarCallback.OnToolbarGUI -= OnGUI;
 			ToolbarCallback.OnToolbarGUI += OnGUI;
 		}
+
 
 		static void OnGUI() {
 			// Create two containers, left and right

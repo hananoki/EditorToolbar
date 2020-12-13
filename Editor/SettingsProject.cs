@@ -6,11 +6,11 @@ using UnityEditor;
 using UnityEngine;
 using System.Reflection;
 
-using E = Hananoki.EditorToolbar.SettingsEditor;
-using P = Hananoki.EditorToolbar.SettingsProject;
+using E = HananokiEditor.EditorToolbar.SettingsEditor;
+using P = HananokiEditor.EditorToolbar.SettingsProject;
 
 
-namespace Hananoki.EditorToolbar {
+namespace HananokiEditor.EditorToolbar {
 	[Serializable]
 	public class SettingsProject {
 		static string jsonPath => $"{Environment.CurrentDirectory}/ProjectSettings/Hananoki.EditorToolbar.json";

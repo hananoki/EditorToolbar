@@ -1,14 +1,14 @@
-﻿//#define ENABLE_LEGACY_PREFERENCE
+﻿#define ENABLE_HANANOKI_SETTINGS
 
-using Hananoki.SharedModule;
+using HananokiEditor.SharedModule;
 using UnityEditor;
 using UnityEngine;
-using Hananoki.Extensions;
+using HananokiEditor.Extensions;
 
-using E = Hananoki.EditorToolbar.SettingsEditor;
-using P = Hananoki.EditorToolbar.SettingsProject;
+using E = HananokiEditor.EditorToolbar.SettingsEditor;
+using P = HananokiEditor.EditorToolbar.SettingsProject;
 
-namespace Hananoki.EditorToolbar {
+namespace HananokiEditor.EditorToolbar {
 	[InitializeOnLoad]
 	[System.Serializable]
 	public class SettingsEditor {
@@ -100,13 +100,12 @@ namespace Hananoki.EditorToolbar {
 
 
 #if ENABLE_HANANOKI_SETTINGS
-	[SettingsClass]
 	public class SettingsEvent {
-		[SettingsMethod]
+		[HananokiSettingsRegister]
 		public static SettingsItem Changed() {
 			return new SettingsItem() {
 				//mode = 1,
-				displayName = Package.name,
+				displayName = Package.nameNicify,
 				version = Package.version,
 				gui = SettingsEditorWindow.DrawGUI,
 			};
