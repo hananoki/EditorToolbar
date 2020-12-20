@@ -5,16 +5,19 @@ using HananokiEditor.SharedModule;
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
+using System.Threading.Tasks;
 using UnityEditor;
 using UnityEditor.SceneManagement;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityToolbarExtender;
+using UnityReflection;
 
 using E = HananokiEditor.EditorToolbar.SettingsEditor;
 using P = HananokiEditor.EditorToolbar.SettingsProject;
 using EE = HananokiEditor.SharedModule.SettingsEditor;
-using UnityEditorEditorUserBuildSettings = UnityReflection.UnityEditorEditorUserBuildSettings;
+
 
 namespace HananokiEditor.EditorToolbar {
 
@@ -49,12 +52,12 @@ namespace HananokiEditor.EditorToolbar {
 
 			public void LoadProjectIcon() {
 				var ico = AssetDatabaseUtils.LoadAssetAtGUID<Texture2D>( E.i.iconOpenCSProject );
-				IconCS = ico ?? Icon.Get( "dll Script Icon" );
+				IconCS = ico ?? EditorIcon.icons_processed_dll_script_icon_asset;
 			}
 
 			public Styles() {
 				IconButtonSize = 30;
-				if( UnitySymbol.Has( "UNITY_2019_3_OR_NEWER" ) ) {
+				if( UnitySymbol.UNITY_2019_3_OR_NEWER ) {
 					IconButtonSize = 32;
 				}
 
@@ -71,7 +74,7 @@ namespace HananokiEditor.EditorToolbar {
 				ButtonRight = new GUIStyle( "ButtonRight" );
 				ButtonRight.padding = r;
 
-				if( UnitySymbol.Has( "UNITY_2019_3_OR_NEWER" ) ) {
+				if( UnitySymbol.UNITY_2019_3_OR_NEWER ) {
 					Button = new GUIStyle( "AppCommand" );
 					Button.margin = new RectOffset( 3, 3, 2, 2 );
 					Button.imagePosition = ImagePosition.ImageLeft;
@@ -85,7 +88,7 @@ namespace HananokiEditor.EditorToolbar {
 				Button.alignment = TextAnchor.MiddleCenter;
 
 
-				if( UnitySymbol.Has( "UNITY_2019_3_OR_NEWER" ) ) {
+				if( UnitySymbol.UNITY_2019_3_OR_NEWER ) {
 					Button2 = new GUIStyle( "AppCommand" );
 					Button2.margin = new RectOffset( 3, 3, 2, 2 );
 					Button2.imagePosition = ImagePosition.ImageLeft;
@@ -110,7 +113,7 @@ namespace HananokiEditor.EditorToolbar {
 				DropDown2.padding = new RectOffset( DropDown2.padding.left, DropDown2.padding.right, 0, 0 );
 				DropDown2.alignment = TextAnchor.MiddleCenter;
 
-				if( UnitySymbol.Has( "UNITY_2019_3_OR_NEWER" ) ) {
+				if( UnitySymbol.UNITY_2019_3_OR_NEWER ) {
 					DropDownButton = new GUIStyle( "DropDown" );
 					//DropDownButton.padding = new RectOffset( DropDownButton.padding.left, DropDownButton.padding.right, 0, 0 );
 				}
@@ -121,7 +124,7 @@ namespace HananokiEditor.EditorToolbar {
 				}
 
 				toggle = new GUIStyle( EditorStyles.toggle );
-				if( UnitySymbol.Has( "UNITY_2019_3_OR_NEWER" ) ) {
+				if( UnitySymbol.UNITY_2019_3_OR_NEWER ) {
 					toggle.margin.top = 5;
 				}
 			}
@@ -144,8 +147,9 @@ namespace HananokiEditor.EditorToolbar {
 				lst.Add( new BuildTargetInfo( p, p.Icon() ) );
 			}
 
-			if( !UnitySymbol.Has( "UNITY_2019_3_OR_NEWER" ) ) {
-				lst.Add( new BuildTargetInfo( BuildTargetGroup.Facebook, Icon.Get( "BuildSettings.Facebook" ) ) );
+			if( !UnitySymbol.UNITY_2019_3_OR_NEWER ) {
+				lst.Add( new BuildTargetInfo( BuildTargetGroup.Facebook, EditorIcon.buildsettings_facebook_small ) );
+				
 			}
 			s_buildTargetInfo = lst.ToArray();
 
@@ -167,8 +171,14 @@ namespace HananokiEditor.EditorToolbar {
 		/// <returns></returns>
 		public static void MakeMenuCommand() {
 			addon = new List<Action>();
-			foreach( var pp in AssemblieUtils.GetAllMethodsWithAttribute<EditorToolbarMethod>() ) {
-				addon.Add( (Action) Delegate.CreateDelegate( typeof( Action ), null, pp ) );
+			var lst = AssemblieUtils.GetAllMethodsWithAttribute<EditorToolbarMethod>().ToList();
+			if( 0 < P.i.reg.Count ) {
+				foreach( var p in P.i.reg ) {
+					var pp = lst.Find( x => x.Module.Assembly.FullName.Split( ',' )[ 0 ] == p.assemblyName );
+					if( pp != null ) {
+						addon.Add( (Action) Delegate.CreateDelegate( typeof( Action ), null, pp ) );
+					}
+				}
 			}
 			//foreach( var p in P.i.reg ) {
 
@@ -198,7 +208,7 @@ namespace HananokiEditor.EditorToolbar {
 			if( EditorHelper.HasMouseClick( GUILayoutUtility.GetLastRect() ) ) {
 				var m = new GenericMenu();
 				m.AddItem( S._Preferences, false, () => UnityEditorMenu.Edit_Preferences() );
-				if( UnitySymbol.Has( "UNITY_2018_3_OR_NEWER" ) ) {
+				if( UnitySymbol.UNITY_2018_3_OR_NEWER ) {
 					m.AddItem( S._ProjectSettings, false, () => UnityEditorMenu.Edit_Project_Settings() );
 				}
 				else {
@@ -217,8 +227,8 @@ namespace HananokiEditor.EditorToolbar {
 					m.AddItem( new GUIContent( S._ScriptExecutionOrder ), false, () => UnityEditorMenu.Edit_Project_Settings_Script_Execution_Order() );
 				}
 				//if( EditorHelper.IsDefine( "ENABLE_HANANOKI_SETTINGS" ) ) {
-					m.AddSeparator( "" );
-					m.AddItem( new GUIContent( "Hananoki-Settings" ), false, () => UnityEditorMenu.Window_Hananoki_Settings() );
+				m.AddSeparator( "" );
+				m.AddItem( new GUIContent( "Hananoki-Settings" ), false, () => UnityEditorMenu.Window_Hananoki_Settings() );
 				//}
 				m.DropDown( GUILayoutUtility.GetLastRect().PopupRect() );
 				Event.current.Use();
@@ -250,7 +260,7 @@ namespace HananokiEditor.EditorToolbar {
 				UnityEditorMenu.File_Build_Settings();
 			}
 
-			if( UnitySymbol.Has( "UNITY_2019_3_OR_NEWER" ) ) {
+			if( UnitySymbol.UNITY_2019_3_OR_NEWER ) {
 				//EditorGUI.DrawRect( rr, new Color(0,0,1,0.2f));
 				rr.y += 3;
 				rr.height -= 6;
@@ -292,7 +302,7 @@ namespace HananokiEditor.EditorToolbar {
 				EditorHelper.SaveScreenCapture();
 			}
 
-			if( UnitySymbol.Has( "UNITY_2019_3_OR_NEWER" ) ) {
+			if( UnitySymbol.UNITY_2019_3_OR_NEWER ) {
 				rr.y += 3;
 				rr.height -= 6;
 				GUI.Label( rr, GUIContent.none, "DopesheetBackground" );
@@ -306,7 +316,14 @@ namespace HananokiEditor.EditorToolbar {
 			}
 		}
 
+		static void Button_Avs() {
+			if( GUILayout.Button( EditorHelper.TempContent( "VS" ), s_styles.Button, GUILayout.Width( s_styles.IconButtonSize ) ) ) {
+				//HEditorWindow.ShowWindow( UnityTypes.UnityEditor_AssetStoreWindow, EE.IsUtilityWindow( UnityTypes.UnityEditor_AssetStoreWindow ) );
 
+				//ScriptEditorUtility.GetScriptEditorFromPath( CodeEditor.CurrentEditorInstallation ) == ScriptEditorUtility.ScriptEditor.Other;
+				UnityEditorSyncVS.SyncSolution();
+			}
+		}
 
 
 		/// <summary>
@@ -315,7 +332,7 @@ namespace HananokiEditor.EditorToolbar {
 		static void OnLeftToolbarGUI() {
 			if( s_styles == null ) s_styles = new Styles();
 
-			if( UnitySymbol.Has( "UNITY_2019_3_OR_NEWER" ) ) {
+			if( UnitySymbol.UNITY_2019_3_OR_NEWER ) {
 			}
 			else {
 				GUILayout.BeginVertical();
@@ -327,14 +344,14 @@ namespace HananokiEditor.EditorToolbar {
 			//GUILayout.FlexibleSpace();
 			//GUILayout.Button( "aaa" );
 
-			if( UnitySymbol.Has( "UNITY_2019_3_OR_NEWER" ) ) {
+			if( UnitySymbol.UNITY_2019_3_OR_NEWER ) {
 				GUILayout.Space( 10 );
 			}
 			else {
 				GUILayout.Space( 20 );
 			}
 
-			if( UnitySymbol.Has( "UNITY_2019_3_OR_NEWER" ) ) {
+			if( UnitySymbol.UNITY_2019_3_OR_NEWER ) {
 			}
 			else {
 				GUILayout.EndHorizontal();
@@ -402,15 +419,16 @@ namespace HananokiEditor.EditorToolbar {
 			}
 		}
 
+
 		/// <summary>
 		/// 右側のツールバー
 		/// </summary>
 		static void OnRightToolbarGUI() {
 			if( s_styles == null ) s_styles = new Styles();
 
-			EditorGUI.BeginChangeCheck();
+			ScopeChange.Begin();
 			m_lockReloadAssemblies = GUILayout.Toggle( m_lockReloadAssemblies, EditorIcon.assemblylock, s_styles.Button2, GUILayout.Width( s_styles.IconButtonSize ) );
-			if( EditorGUI.EndChangeCheck() ) {
+			if( ScopeChange.End() ) {
 				if( m_lockReloadAssemblies ) {
 					EditorApplication.LockReloadAssemblies();
 					EditorHelper.ShowMessagePop( "Lock Reload Assemblies" );
@@ -422,18 +440,16 @@ namespace HananokiEditor.EditorToolbar {
 				}
 			}
 
-			if( UnitySymbol.Has( "UNITY_2019_3_OR_NEWER" ) ) {
-				//GUILayout.Space( 4 );
-				var prop = R.Property( "enterPlayModeOptionsEnabled", typeof( EditorSettings ) );
-				EditorGUI.BeginChangeCheck();
-				var toggle = GUILayout.Toggle( prop.Get<bool>(), "PlayMode", s_styles.Button2 );
-				if( EditorGUI.EndChangeCheck() ) {
-					prop.Set( toggle );
+			if( UnitySymbol.UNITY_2019_3_OR_NEWER ) {
+				ScopeChange.Begin();
+				var toggle = GUILayout.Toggle( UnityEditorEditorSettings.enterPlayModeOptionsEnabled, "PlayMode", s_styles.Button2 );
+				if( ScopeChange.End() ) {
+					UnityEditorEditorSettings.enterPlayModeOptionsEnabled = toggle;
 				}
 			}
 
 
-			if( UnitySymbol.Has( "UNITY_2019_3_OR_NEWER" ) ) {
+			if( UnitySymbol.UNITY_2019_3_OR_NEWER ) {
 			}
 			else {
 				GUILayout.BeginVertical();
@@ -451,10 +467,11 @@ namespace HananokiEditor.EditorToolbar {
 
 			Button_AssetStore();
 
+			//Button_Avs();
 
 
 			GUILayout.FlexibleSpace();
-			if( UnitySymbol.Has( "UNITY_2019_3_OR_NEWER" ) ) {
+			if( UnitySymbol.UNITY_2019_3_OR_NEWER ) {
 			}
 			else {
 				GUILayout.EndHorizontal();
