@@ -1,5 +1,14 @@
 # Editor Toolbar
 
+## [1.0.12] - 2021-02-07
+- SharedModule v1.7.5 or later
+
+### Added
+- Added current render pipeline display
+s
+### Changed
+- Adjusted the style to Unity 2020.2
+
 ## [1.0.11] - 2020-12-20
 - SharedModule v1.7.4 or later
 

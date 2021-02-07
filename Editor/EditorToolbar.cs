@@ -79,21 +79,28 @@ namespace HananokiEditor.EditorToolbar {
 					Button.margin = new RectOffset( 3, 3, 2, 2 );
 					Button.imagePosition = ImagePosition.ImageLeft;
 					Button.fixedWidth = 0;
+					//Button.padding = new RectOffset( 4, 4, 3+3, 3 + 3 );
 				}
 				else {
 					Button = new GUIStyle( "button" );
 					Button.fixedHeight = 18;
 				}
-				Button.padding = r;
+				//Button.padding = r;
+				Button.padding = new RectOffset( 4, 4, 3 , 3  );
 				Button.alignment = TextAnchor.MiddleCenter;
 
 
 				if( UnitySymbol.UNITY_2019_3_OR_NEWER ) {
-					Button2 = new GUIStyle( "AppCommand" );
+					var AppCommand = (GUIStyle) "AppCommand";
+					Button2 = new GUIStyle( "button" );
 					Button2.margin = new RectOffset( 3, 3, 2, 2 );
 					Button2.imagePosition = ImagePosition.ImageLeft;
-					Button2.fixedWidth = 0;
+					Button2.fixedHeight = AppCommand.fixedHeight;
 					Button2.padding = new RectOffset( 4, 4, 3, 3 );
+					//Button2.active.textColor = Color.black;
+					//Button2.onActive.textColor = Color.black;
+					//Button2.onFocused.textColor = Color.black;
+					//Button2.focused.textColor = Color.black;
 				}
 				else {
 					Button2 = new GUIStyle( "button" );
@@ -149,7 +156,7 @@ namespace HananokiEditor.EditorToolbar {
 
 			if( !UnitySymbol.UNITY_2019_3_OR_NEWER ) {
 				lst.Add( new BuildTargetInfo( BuildTargetGroup.Facebook, EditorIcon.buildsettings_facebook_small ) );
-				
+
 			}
 			s_buildTargetInfo = lst.ToArray();
 
@@ -270,7 +277,7 @@ namespace HananokiEditor.EditorToolbar {
 
 
 		static void Button_OpenCSProject() {
-			if( GUILayout.Button( EditorHelper.TempContent( EditorIcon.cs_script, S._OpenCSharpProject ), s_styles.Button2, GUILayout.Width( s_styles.IconButtonSize ) ) ) {
+			if( GUILayout.Button( EditorHelper.TempContent( EditorIcon.cs_script, S._OpenCSharpProject ), s_styles.Button, GUILayout.Width( s_styles.IconButtonSize ) ) ) {
 				EditorApplication.ExecuteMenuItem( "Assets/Open C# Project" );
 			}
 		}
@@ -427,7 +434,7 @@ namespace HananokiEditor.EditorToolbar {
 			if( s_styles == null ) s_styles = new Styles();
 
 			ScopeChange.Begin();
-			m_lockReloadAssemblies = GUILayout.Toggle( m_lockReloadAssemblies, EditorIcon.assemblylock, s_styles.Button2, GUILayout.Width( s_styles.IconButtonSize ) );
+			m_lockReloadAssemblies = GUILayout.Toggle( m_lockReloadAssemblies, EditorIcon.assemblylock, s_styles.Button, GUILayout.Width( s_styles.IconButtonSize ) );
 			if( ScopeChange.End() ) {
 				if( m_lockReloadAssemblies ) {
 					EditorApplication.LockReloadAssemblies();
@@ -468,7 +475,30 @@ namespace HananokiEditor.EditorToolbar {
 			Button_AssetStore();
 
 			//Button_Avs();
+#if UNITY_2019_3_OR_NEWER
+			var renderPipelineAsset = UnityEngine.Rendering.GraphicsSettings.currentRenderPipeline;
+#else
+			var renderPipelineAsset = UnityEngine.Rendering.GraphicsSettings.renderPipelineAsset;
+#endif
 
+			if( renderPipelineAsset == null ) {
+				HEditorGUILayout.LabelBox( "Built-in RP" );
+			}
+			else {
+				var rpType = renderPipelineAsset.GetType();
+
+				if( rpType == UnityTypes.UnityEngine_Rendering_Universal_UniversalRenderPipelineAsset ) {
+					HEditorGUILayout.LabelBox( "URP" );
+				}
+				else if( rpType == UnityTypes.UnityEngine_Rendering_HighDefinition_HDRenderPipelineAsset ) {
+					HEditorGUILayout.LabelBox( "HDRP" );
+				}
+				else {
+					HEditorGUILayout.LabelBox( "Custom RP" );
+				}
+				//	GUILayout.Label( UnityEngine.Rendering.GraphicsSettings.currentRenderPipeline.GetTypeName() );
+				//Debug.Log( UnityEngine.Rendering.GraphicsSettings.currentRenderPipeline.GetType().AssemblyQualifiedName );
+			}
 
 			GUILayout.FlexibleSpace();
 			if( UnitySymbol.UNITY_2019_3_OR_NEWER ) {
