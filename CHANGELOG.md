@@ -1,11 +1,21 @@
 # Editor Toolbar
 
+## [1.0.13] - 2021-02-19
+- SharedModule v1.7.6 or later
+
+### Added
+- Added an icon to Play Mode
+- Add language file
+
+### Changed
+- Adjusted the layout area when Unity Collaborate is disabled
+
 ## [1.0.12] - 2021-02-07
 - SharedModule v1.7.5 or later
 
 ### Added
 - Added current render pipeline display
-s
+
 ### Changed
 - Adjusted the style to Unity 2020.2
 

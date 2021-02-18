@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Reflection;
 using UnityEditor;
 using UnityEngine;
+using UnityReflection;
 using HananokiEditor;
 
 namespace UnityToolbarExtender {
@@ -75,8 +76,11 @@ namespace UnityToolbarExtender {
 			rightRect.xMax -= 80; // Account
 			rightRect.xMax -= 10; // Spacing between account and cloud
 			rightRect.xMax -= 32; // Cloud
-			rightRect.xMax -= 10; // Spacing between cloud and collab
-			rightRect.xMax -= 78; // Colab
+
+			if( UnityEditorCollaborationCollab.IsToolbarVisible != null ) {
+				rightRect.xMax -= 10; // Spacing between cloud and collab
+				rightRect.xMax -= 78; // Colab
+			}
 
 			// Add spacing around existing controls
 			leftRect.xMin += 10;
@@ -119,6 +123,7 @@ namespace UnityToolbarExtender {
 				GUILayout.EndHorizontal();
 				GUILayout.EndArea();
 			}
+			//EditorGUI.DrawRect(rightRect,new Color(0,0,1,0.1f));
 		}
 	}
 }

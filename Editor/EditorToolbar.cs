@@ -1,6 +1,7 @@
 ﻿#pragma warning disable 618
 
 using HananokiEditor.Extensions;
+using HananokiRuntime.Extensions;
 using HananokiEditor.SharedModule;
 using System;
 using System.Collections.Generic;
@@ -86,7 +87,7 @@ namespace HananokiEditor.EditorToolbar {
 					Button.fixedHeight = 18;
 				}
 				//Button.padding = r;
-				Button.padding = new RectOffset( 4, 4, 3 , 3  );
+				Button.padding = new RectOffset( 4, 4, 3, 3 );
 				Button.alignment = TextAnchor.MiddleCenter;
 
 
@@ -96,6 +97,7 @@ namespace HananokiEditor.EditorToolbar {
 					Button2.margin = new RectOffset( 3, 3, 2, 2 );
 					Button2.imagePosition = ImagePosition.ImageLeft;
 					Button2.fixedHeight = AppCommand.fixedHeight;
+					//Button2.stretchWidth = true;
 					Button2.padding = new RectOffset( 4, 4, 3, 3 );
 					//Button2.active.textColor = Color.black;
 					//Button2.onActive.textColor = Color.black;
@@ -140,31 +142,39 @@ namespace HananokiEditor.EditorToolbar {
 		public static Styles s_styles;
 
 		const float SPACE = 8;
-		static BuildTargetInfo[] s_buildTargetInfo;
+		static List<BuildTargetInfo> s_buildTargetInfo;
 
 		static List<Action> addon;
 
 		static bool m_lockReloadAssemblies;
 
+		//static ScriptableObject[] s_urpAssets;
+		//static ScriptableObject[] s_hdrpAssets;
+
 		static EditorToolbar() {
 			E.Load();
-			var lst = new List<BuildTargetInfo>();
+			s_buildTargetInfo = new List<BuildTargetInfo>( 64 );
 
 			foreach( var p in PlatformUtils.GetSupportList() ) {
-				lst.Add( new BuildTargetInfo( p, p.Icon() ) );
+				s_buildTargetInfo.Add( new BuildTargetInfo( p, p.Icon() ) );
 			}
 
 			if( !UnitySymbol.UNITY_2019_3_OR_NEWER ) {
-				lst.Add( new BuildTargetInfo( BuildTargetGroup.Facebook, EditorIcon.buildsettings_facebook_small ) );
-
+				s_buildTargetInfo.Add( new BuildTargetInfo( BuildTargetGroup.Facebook, EditorIcon.buildsettings_facebook_small ) );
 			}
-			s_buildTargetInfo = lst.ToArray();
 
 			ToolbarExtender.LeftToolbarGUI.Add( OnLeftToolbarGUI );
 			ToolbarExtender.RightToolbarGUI.Add( OnRightToolbarGUI );
 
 			MakeMenuCommand();
+			//if( UnityTypes.UnityEngine_Rendering_Universal_UniversalRenderPipelineAsset != null ) {
+			//	s_urpAssets = AssetDatabaseUtils.FindAssetsAndLoad( UnityTypes.UnityEngine_Rendering_Universal_UniversalRenderPipelineAsset ).Cast<ScriptableObject>().ToArray();
+			//}
+			//if( UnityTypes.UnityEngine_Rendering_HighDefinition_HDRenderPipelineAsset != null ) {
+			//	s_hdrpAssets = AssetDatabaseUtils.FindAssetsAndLoad( UnityTypes.UnityEngine_Rendering_HighDefinition_HDRenderPipelineAsset ).Cast<ScriptableObject>().ToArray();
+			//}
 		}
+
 
 
 		public static void Repaint() {
@@ -237,8 +247,7 @@ namespace HananokiEditor.EditorToolbar {
 				m.AddSeparator( "" );
 				m.AddItem( new GUIContent( "Hananoki-Settings" ), false, () => UnityEditorMenu.Window_Hananoki_Settings() );
 				//}
-				m.DropDown( GUILayoutUtility.GetLastRect().PopupRect() );
-				Event.current.Use();
+				m.DropDownLastRect();
 			}
 
 			GUI.Button( ssr, cont, s_styles.DropDown2 );
@@ -246,7 +255,7 @@ namespace HananokiEditor.EditorToolbar {
 
 
 		static void Button_Platform() {
-			var cont = EditorHelper.TempContent( Array.Find( s_buildTargetInfo, x => x.group == UnityEditorEditorUserBuildSettings.activeBuildTargetGroup ).icon, S._OpenBuildSettings );
+			var cont = EditorHelper.TempContent( s_buildTargetInfo.Find( x => x.group == UnityEditorEditorUserBuildSettings.activeBuildTargetGroup ).icon, S._OpenBuildSettings );
 
 			Rect r = GUILayoutUtility.GetRect( cont, s_styles.DropDownButton, GUILayout.Width( 50 ) );
 			Rect rr = r;
@@ -274,7 +283,44 @@ namespace HananokiEditor.EditorToolbar {
 				GUI.Label( rr, GUIContent.none, "DopesheetBackground" );
 			}
 		}
+		//static void Button_RenderPipe() {
+		//	var renderPipelineAsset = GraphicsSettingsUtils.currentRenderPipeline;
 
+		//	var cont = EditorHelper.TempContent( "Built-in RP" );
+		//	if( renderPipelineAsset != null ) {
+		//		var rpType = renderPipelineAsset.GetType();
+
+		//		if( rpType == UnityTypes.UnityEngine_Rendering_Universal_UniversalRenderPipelineAsset ) {
+		//			cont.text = "URP";
+		//		}
+		//		else if( rpType == UnityTypes.UnityEngine_Rendering_HighDefinition_HDRenderPipelineAsset ) {
+		//			cont.text = "HDRP";
+		//		}
+		//		else {
+		//			cont.text = "Custom RP";
+		//		}
+		//	}
+		//	var ssr = GUILayoutUtility.GetRect( cont, s_styles.DropDown2 );
+		//	if( EditorHelper.HasMouseClick( GUILayoutUtility.GetLastRect() ) ) {
+		//		var m = new GenericMenu();
+		//		m.AddItem( "Built-in RP", renderPipelineAsset == null, () => UnityEditorMenu.Edit_Preferences() );
+		//		if( !s_urpAssets.IsEmpty() ) {
+		//			m.AddSeparator();
+		//			foreach( var p in s_urpAssets ) {
+		//				m.AddItem( p.name, () => GraphicsSettingsUtils.currentRenderPipeline = (UnityEngine.Rendering.RenderPipelineAsset) p );
+		//			}
+		//		}
+		//		if( !s_hdrpAssets.IsEmpty() ) {
+		//			m.AddSeparator();
+		//			foreach( var p in s_hdrpAssets ) {
+		//				m.AddItem( p.name, () => UnityEditorMenu.Edit_Preferences() );
+		//			}
+		//		}
+		//		m.DropDownLastRect();
+		//	}
+
+		//	GUI.Button( ssr, cont, s_styles.DropDown2 );
+		//}
 
 		static void Button_OpenCSProject() {
 			if( GUILayout.Button( EditorHelper.TempContent( EditorIcon.cs_script, S._OpenCSharpProject ), s_styles.Button, GUILayout.Width( s_styles.IconButtonSize ) ) ) {
@@ -449,11 +495,13 @@ namespace HananokiEditor.EditorToolbar {
 
 			if( UnitySymbol.UNITY_2019_3_OR_NEWER ) {
 				ScopeChange.Begin();
-				var toggle = GUILayout.Toggle( UnityEditorEditorSettings.enterPlayModeOptionsEnabled, "PlayMode", s_styles.Button2 );
+				var cont = EditorHelper.TempContent( "PlayMode", UnityEditorEditorSettings.enterPlayModeOptionsEnabled ? EditorIcon.lightmeter_greenlight : EditorIcon.lightmeter_lightrim );
+				var toggle = GUILayout.Toggle( UnityEditorEditorSettings.enterPlayModeOptionsEnabled, cont, s_styles.Button2, GUILayout.Width( cont.CalcWidth_label() - 16 ) );
 				if( ScopeChange.End() ) {
 					UnityEditorEditorSettings.enterPlayModeOptionsEnabled = toggle;
 				}
 			}
+
 
 
 			if( UnitySymbol.UNITY_2019_3_OR_NEWER ) {
@@ -480,6 +528,7 @@ namespace HananokiEditor.EditorToolbar {
 #else
 			var renderPipelineAsset = UnityEngine.Rendering.GraphicsSettings.renderPipelineAsset;
 #endif
+			//Button_RenderPipe();
 
 			if( renderPipelineAsset == null ) {
 				HEditorGUILayout.LabelBox( "Built-in RP" );
