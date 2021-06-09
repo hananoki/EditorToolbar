@@ -11,8 +11,7 @@
 
 ![Preview](Documentation~/Preview.png)
 
-- 2019.3 supported
-- 2020.1 supported
+- Compatible with styles after 2019.3
 
 ![Preview](Documentation~/Preview_2019.3.png)
 
@@ -27,7 +26,7 @@
 ```
 
 ## Requirement
-[![](https://img.shields.io/badge/SharedModule-v1.7.6%20or%20later-blue.svg)](https://github.com/hananoki/SharedModule)
+[![](https://img.shields.io/badge/SharedModule-v1.9.0%20or%20later-blue.svg)](https://github.com/hananoki/SharedModule)
 
 ## Use Library
 [unity-toolbar-extender](https://github.com/marijnz/unity-toolbar-extender)

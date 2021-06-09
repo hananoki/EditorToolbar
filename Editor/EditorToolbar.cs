@@ -1,22 +1,14 @@
-﻿#pragma warning disable 618
-
-using HananokiEditor.Extensions;
-using HananokiRuntime.Extensions;
+﻿using HananokiEditor.Extensions;
 using HananokiEditor.SharedModule;
 using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using System.Threading.Tasks;
 using UnityEditor;
 using UnityEditor.SceneManagement;
 using UnityEngine;
 using UnityEngine.SceneManagement;
-using UnityToolbarExtender;
 using UnityReflection;
-
-using E = HananokiEditor.EditorToolbar.SettingsEditor;
-using P = HananokiEditor.EditorToolbar.SettingsProject;
+using UnityToolbarExtender;
 using EE = HananokiEditor.SharedModule.SettingsEditor;
 
 
@@ -35,110 +27,6 @@ namespace HananokiEditor.EditorToolbar {
 		}
 
 
-		public class Styles {
-			public GUIStyle Button;
-			public GUIStyle ButtonLeft;
-			public GUIStyle ButtonMid;
-			public GUIStyle ButtonRight;
-			public GUIStyle DropDown;
-			public GUIStyle DropDown2;
-			public GUIStyle DropDownButton;
-
-			public GUIStyle Button2;
-			public GUIStyle toggle;
-
-			public Texture2D IconCS;
-
-			public float IconButtonSize;
-
-			public void LoadProjectIcon() {
-				var ico = AssetDatabaseUtils.LoadAssetAtGUID<Texture2D>( E.i.iconOpenCSProject );
-				IconCS = ico ?? EditorIcon.icons_processed_dll_script_icon_asset;
-			}
-
-			public Styles() {
-				IconButtonSize = 30;
-				if( UnitySymbol.UNITY_2019_3_OR_NEWER ) {
-					IconButtonSize = 32;
-				}
-
-				LoadProjectIcon();
-
-
-				ButtonLeft = new GUIStyle( "ButtonLeft" );
-				var r = new RectOffset( 6, 6, 0, 0 );
-				ButtonLeft.padding = r;
-
-				ButtonMid = new GUIStyle( "ButtonMid" );
-				ButtonMid.padding = r;
-
-				ButtonRight = new GUIStyle( "ButtonRight" );
-				ButtonRight.padding = r;
-
-				if( UnitySymbol.UNITY_2019_3_OR_NEWER ) {
-					Button = new GUIStyle( "AppCommand" );
-					Button.margin = new RectOffset( 3, 3, 2, 2 );
-					Button.imagePosition = ImagePosition.ImageLeft;
-					Button.fixedWidth = 0;
-					//Button.padding = new RectOffset( 4, 4, 3+3, 3 + 3 );
-				}
-				else {
-					Button = new GUIStyle( "button" );
-					Button.fixedHeight = 18;
-				}
-				//Button.padding = r;
-				Button.padding = new RectOffset( 4, 4, 3, 3 );
-				Button.alignment = TextAnchor.MiddleCenter;
-
-
-				if( UnitySymbol.UNITY_2019_3_OR_NEWER ) {
-					var AppCommand = (GUIStyle) "AppCommand";
-					Button2 = new GUIStyle( "button" );
-					Button2.margin = new RectOffset( 3, 3, 2, 2 );
-					Button2.imagePosition = ImagePosition.ImageLeft;
-					Button2.fixedHeight = AppCommand.fixedHeight;
-					//Button2.stretchWidth = true;
-					Button2.padding = new RectOffset( 4, 4, 3, 3 );
-					//Button2.active.textColor = Color.black;
-					//Button2.onActive.textColor = Color.black;
-					//Button2.onFocused.textColor = Color.black;
-					//Button2.focused.textColor = Color.black;
-				}
-				else {
-					Button2 = new GUIStyle( "button" );
-					Button2.fixedHeight = 18;
-					Button2.padding = EditorStyles.label.padding;
-				}
-
-				//Button2.margin = EditorStyles.label.margin;
-
-
-				DropDown = new GUIStyle( "DropDown" );
-				//Button.padding = new RectOffset( 6, 6, 1, 1 );
-				DropDown.alignment = TextAnchor.MiddleCenter;
-				//Button.lineHeight = ButtonRight.lineHeight;
-
-				DropDown2 = new GUIStyle( "DropDown" );
-				DropDown2.padding = new RectOffset( DropDown2.padding.left, DropDown2.padding.right, 0, 0 );
-				DropDown2.alignment = TextAnchor.MiddleCenter;
-
-				if( UnitySymbol.UNITY_2019_3_OR_NEWER ) {
-					DropDownButton = new GUIStyle( "DropDown" );
-					//DropDownButton.padding = new RectOffset( DropDownButton.padding.left, DropDownButton.padding.right, 0, 0 );
-				}
-				else {
-					DropDownButton = new GUIStyle( "DropDownButton" );
-					DropDownButton.padding = new RectOffset( 6, DropDownButton.padding.right, 2, 2 );
-					DropDownButton.fixedHeight = 18;
-				}
-
-				toggle = new GUIStyle( EditorStyles.toggle );
-				if( UnitySymbol.UNITY_2019_3_OR_NEWER ) {
-					toggle.margin.top = 5;
-				}
-			}
-		}
-
 		public static Styles s_styles;
 
 		const float SPACE = 8;
@@ -148,11 +36,9 @@ namespace HananokiEditor.EditorToolbar {
 
 		static bool m_lockReloadAssemblies;
 
-		//static ScriptableObject[] s_urpAssets;
-		//static ScriptableObject[] s_hdrpAssets;
 
 		static EditorToolbar() {
-			E.Load();
+			//E.Load();
 			s_buildTargetInfo = new List<BuildTargetInfo>( 64 );
 
 			foreach( var p in PlatformUtils.GetSupportList() ) {
@@ -166,47 +52,101 @@ namespace HananokiEditor.EditorToolbar {
 			ToolbarExtender.LeftToolbarGUI.Add( OnLeftToolbarGUI );
 			ToolbarExtender.RightToolbarGUI.Add( OnRightToolbarGUI );
 
-			MakeMenuCommand();
-			//if( UnityTypes.UnityEngine_Rendering_Universal_UniversalRenderPipelineAsset != null ) {
-			//	s_urpAssets = AssetDatabaseUtils.FindAssetsAndLoad( UnityTypes.UnityEngine_Rendering_Universal_UniversalRenderPipelineAsset ).Cast<ScriptableObject>().ToArray();
-			//}
-			//if( UnityTypes.UnityEngine_Rendering_HighDefinition_HDRenderPipelineAsset != null ) {
-			//	s_hdrpAssets = AssetDatabaseUtils.FindAssetsAndLoad( UnityTypes.UnityEngine_Rendering_HighDefinition_HDRenderPipelineAsset ).Cast<ScriptableObject>().ToArray();
-			//}
+
+#if UNITY_2021_1_OR_NEWER
+				EditorApplication.update += add;
+#endif
 		}
 
+
+#if UNITY_2021_1_OR_NEWER
+		static UnityEditorToolbar m_UnityEditorToolbar;
+
+		static void add() {
+			var aa = Resources.FindObjectsOfTypeAll( UnityTypes.UnityEditor_Toolbar );
+			if( aa.Length == 1 ) {
+				m_UnityEditorToolbar = new UnityEditorToolbar( aa[ 0 ] );
+			}
+			else {
+				return;
+			}
+
+			if( m_UnityEditorToolbar == null ) return;
+
+			if( m_UnityEditorToolbar.m_Root == null ) return;
+
+			m_UnityEditorToolbar.m_Root.SetFont( EditorStyles.standardFont );
+
+			var ToolbarZoneLeftAlign = m_UnityEditorToolbar.m_Root.名前から検索する( "ToolbarZoneLeftAlign" );
+			var ToolbarZonePlayMode = m_UnityEditorToolbar.m_Root.名前から検索する( "ToolbarZonePlayMode" );
+			var ToolbarZoneRightAlign = m_UnityEditorToolbar.m_Root.名前から検索する( "ToolbarZoneRightAlign" );
+
+			//var ToolbarZoneRightAlign = m_UnityEditorToolbar.m_Root.名前から検索する( "ToolbarZoneRightAlign" );
+
+			//"ToolbarZonePlayMode"
+			//Debug.Log( ToolbarZoneLeftAlign.name );
+			var vs = new UnityEngine.UIElements.VisualElement();
+			vs.name = "ToolSettings";
+
+			var vss = new UnityEngine.UIElements.IMGUIContainer();
+			vss.onGUIHandler += () => {
+				//GUI.Button( new Rect( 0, 0, 32, 20 ), "aaa" );
+				var xx = ToolbarZonePlayMode.layout.x - vss.layout.x;
+				xx += 12;
+				vss.style.width = xx;
+
+				GUILayout.BeginArea( new Rect( 0, 0, xx, 24 ) );
+				GUILayout.BeginHorizontal();
+				//foreach( var handler in ToolbarExtender.LeftToolbarGUI ) {
+				//	handler();
+				//}
+				OnLeftToolbarGUI();
+
+				GUILayout.EndHorizontal();
+				GUILayout.EndArea();
+
+			};
+			//string str = "StyleSheets/Toolbars/" + "MainToolbar";
+			//var styleSheet = EditorGUIUtility.Load( str + "Common.uss" ) as UnityEngine.UIElements.StyleSheet;
+			//UnityEditorToolbarsEditorToolbarUtility.LoadStyleSheets( "MainToolbar", vs );
+			//vs.Add( vss );
+			//vs.styleSheets.Add( styleSheet );
+			//vs.style.height = 20;
+			//vs.style.width = 120;
+			vss.style.height = 20;
+			vss.style.width = 120;
+			ToolbarZoneLeftAlign.style.paddingRight = 0;
+			ToolbarZoneLeftAlign.Add( vss );
+
+			var rightIMGUIContainer = new UnityEngine.UIElements.IMGUIContainer();
+			rightIMGUIContainer.onGUIHandler += () => {
+				var xx = vs.worldBound.x - ToolbarZoneRightAlign.worldBound.x;
+				//xx += 12;
+				rightIMGUIContainer.style.width = xx;
+				rightIMGUIContainer.style.height = 20;
+
+				GUILayout.BeginArea( new Rect( 0, 0, xx, 20 ) );
+				GUILayout.BeginHorizontal();
+
+				OnRightToolbarGUI();
+
+				GUILayout.EndHorizontal();
+				GUILayout.EndArea();
+			};
+			ToolbarZoneRightAlign.style.paddingLeft = 0;
+			ToolbarZoneRightAlign.Add( vs );
+			ToolbarZoneRightAlign.Add( rightIMGUIContainer );
+
+			EditorApplication.update -= add;
+		}
+#endif
+
+		
 
 
 		public static void Repaint() {
 			ToolbarCallback.Repaint();
 		}
-
-
-		/// <summary>
-		/// 
-		/// </summary>
-		/// <returns></returns>
-		public static void MakeMenuCommand() {
-			addon = new List<Action>();
-			var lst = AssemblieUtils.GetAllMethodsWithAttribute<EditorToolbarMethod>().ToList();
-			if( 0 < P.i.reg.Count ) {
-				foreach( var p in P.i.reg ) {
-					var pp = lst.Find( x => x.Module.Assembly.FullName.Split( ',' )[ 0 ] == p.assemblyName );
-					if( pp != null ) {
-						addon.Add( (Action) Delegate.CreateDelegate( typeof( Action ), null, pp ) );
-					}
-				}
-			}
-			//foreach( var p in P.i.reg ) {
-
-			//	var lst = R.Methods( typeof( EditorToolbarMethod ), p.className, p.assemblyName );
-			//	foreach( var pp in lst ) {
-			//		addon.Add( (Action) Delegate.CreateDelegate( typeof( Action ), null, pp ) );
-			//	}
-			//}
-			Repaint();
-		}
-
 
 
 		public static void CallbackEventOnSwitchPlatform( object userData ) {
@@ -224,29 +164,32 @@ namespace HananokiEditor.EditorToolbar {
 
 			if( EditorHelper.HasMouseClick( GUILayoutUtility.GetLastRect() ) ) {
 				var m = new GenericMenu();
-				m.AddItem( S._Preferences, false, () => UnityEditorMenu.Edit_Preferences() );
+				m.AddItem( S._Preferences, () => UnityEditorMenu.Edit_Preferences() );
 				if( UnitySymbol.UNITY_2018_3_OR_NEWER ) {
-					m.AddItem( S._ProjectSettings, false, () => UnityEditorMenu.Edit_Project_Settings() );
+					m.AddItem( S._ProjectSettings, () => UnityEditorMenu.Edit_Project_Settings() );
 				}
 				else {
 					m.AddSeparator( "" );
-					m.AddItem( new GUIContent( S._Input ), false, () => UnityEditorMenu.Edit_Project_Settings_Input() );
-					m.AddItem( new GUIContent( S._TagsandLayers ), false, () => UnityEditorMenu.Edit_Project_Settings_Tags_and_Layers() );
-					m.AddItem( new GUIContent( S._Audio ), false, () => UnityEditorMenu.Edit_Project_Settings_Audio() );
-					m.AddItem( new GUIContent( S._Time ), false, () => UnityEditorMenu.Edit_Project_Settings_Time() );
-					m.AddItem( new GUIContent( S._Player ), false, () => UnityEditorMenu.Edit_Project_Settings_Player() );
-					m.AddItem( new GUIContent( S._Physics ), false, () => UnityEditorMenu.Edit_Project_Settings_Physics() );
-					m.AddItem( new GUIContent( S._Physics2D ), false, () => UnityEditorMenu.Edit_Project_Settings_Physics_2D() );
-					m.AddItem( new GUIContent( S._Quality ), false, () => UnityEditorMenu.Edit_Project_Settings_Quality() );
-					m.AddItem( new GUIContent( S._Graphics ), false, () => UnityEditorMenu.Edit_Project_Settings_Graphics() );
-					m.AddItem( new GUIContent( S._Network ), false, () => UnityEditorMenu.Edit_Project_Settings_Network() );
-					m.AddItem( new GUIContent( S._Editor ), false, () => UnityEditorMenu.Edit_Project_Settings_Editor() );
-					m.AddItem( new GUIContent( S._ScriptExecutionOrder ), false, () => UnityEditorMenu.Edit_Project_Settings_Script_Execution_Order() );
+					m.AddItem( S._Input, () => UnityEditorMenu.Edit_Project_Settings_Input() );
+					m.AddItem( S._TagsandLayers, () => UnityEditorMenu.Edit_Project_Settings_Tags_and_Layers() );
+					m.AddItem( S._Audio, () => UnityEditorMenu.Edit_Project_Settings_Audio() );
+					m.AddItem( S._Time, () => UnityEditorMenu.Edit_Project_Settings_Time() );
+					m.AddItem( S._Player, () => UnityEditorMenu.Edit_Project_Settings_Player() );
+					m.AddItem( S._Physics, () => UnityEditorMenu.Edit_Project_Settings_Physics() );
+					m.AddItem( S._Physics2D, () => UnityEditorMenu.Edit_Project_Settings_Physics_2D() );
+					m.AddItem( S._Quality, () => UnityEditorMenu.Edit_Project_Settings_Quality() );
+					m.AddItem( S._Graphics, () => UnityEditorMenu.Edit_Project_Settings_Graphics() );
+					m.AddItem( S._Network, () => UnityEditorMenu.Edit_Project_Settings_Network() );
+					m.AddItem( S._Editor, () => UnityEditorMenu.Edit_Project_Settings_Editor() );
+					m.AddItem( S._ScriptExecutionOrder, () => UnityEditorMenu.Edit_Project_Settings_Script_Execution_Order() );
 				}
-				//if( EditorHelper.IsDefine( "ENABLE_HANANOKI_SETTINGS" ) ) {
+
 				m.AddSeparator( "" );
-				m.AddItem( new GUIContent( "Hananoki-Settings" ), false, () => UnityEditorMenu.Window_Hananoki_Settings() );
-				//}
+				m.AddItem( "Hananoki-Settings", () => UnityEditorMenu.Window_Hananoki_Settings() );
+				if( EditorHelper.HasMenuItem( ExternalPackages.menuRenderPipeline ) ) {
+					m.AddItem( ExternalPackages.menuRenderPipeline.FileName(), () => ExternalPackages.menuRenderPipeline.ExecuteMenuItem() );
+				}
+
 				m.DropDownLastRect();
 			}
 
@@ -365,7 +308,7 @@ namespace HananokiEditor.EditorToolbar {
 
 		static void Button_AssetStore() {
 			if( GUILayout.Button( EditorHelper.TempContent( EditorIcon.asset_store, S._OpenAssetStore ), s_styles.Button, GUILayout.Width( s_styles.IconButtonSize ) ) ) {
-				HEditorWindow.ShowWindow( UnityTypes.UnityEditor_AssetStoreWindow, EE.IsUtilityWindow( UnityTypes.UnityEditor_AssetStoreWindow ) );
+				EditorWindowUtils.ShowWindow( UnityTypes.UnityEditor_AssetStoreWindow, EE.IsUtilityWindow( UnityTypes.UnityEditor_AssetStoreWindow ) );
 			}
 		}
 
@@ -383,6 +326,7 @@ namespace HananokiEditor.EditorToolbar {
 		/// 左側のツールバー
 		/// </summary>
 		static void OnLeftToolbarGUI() {
+			//if( E.i.enabled ) return;
 			if( s_styles == null ) s_styles = new Styles();
 
 			if( UnitySymbol.UNITY_2019_3_OR_NEWER ) {
@@ -421,7 +365,7 @@ namespace HananokiEditor.EditorToolbar {
 			GUILayout.Label( EditorHelper.TempContent( SceneManager.GetActiveScene().name, EditorIcon.sceneasset ), s_styles.DropDown, GUILayout.Width( 160 ) );
 			if( EditorHelper.HasMouseClick( GUILayoutUtility.GetLastRect() ) ) {
 				var m = new GenericMenu();
-				var lst = EditorHelper.GetBuildSceneNames();
+				var lst = EditorHelper.GetBuildSceneNames( false );
 				if( 0 < lst.Length ) {
 					foreach( var path in lst ) {
 						if( File.Exists( path ) ) {
@@ -477,6 +421,7 @@ namespace HananokiEditor.EditorToolbar {
 		/// 右側のツールバー
 		/// </summary>
 		static void OnRightToolbarGUI() {
+			//if( E.i.enabled ) return;
 			if( s_styles == null ) s_styles = new Styles();
 
 			ScopeChange.Begin();
@@ -531,25 +476,30 @@ namespace HananokiEditor.EditorToolbar {
 			//Button_RenderPipe();
 
 			if( renderPipelineAsset == null ) {
-				HEditorGUILayout.LabelBox( "Built-in RP" );
+				LabelBox( "Built-in RP" );
 			}
 			else {
 				var rpType = renderPipelineAsset.GetType();
 
 				if( rpType == UnityTypes.UnityEngine_Rendering_Universal_UniversalRenderPipelineAsset ) {
-					HEditorGUILayout.LabelBox( "URP" );
+					LabelBox( "URP" );
 				}
 				else if( rpType == UnityTypes.UnityEngine_Rendering_HighDefinition_HDRenderPipelineAsset ) {
-					HEditorGUILayout.LabelBox( "HDRP" );
+					LabelBox( "HDRP" );
 				}
 				else {
-					HEditorGUILayout.LabelBox( "Custom RP" );
+					LabelBox( "Custom RP" );
 				}
 				//	GUILayout.Label( UnityEngine.Rendering.GraphicsSettings.currentRenderPipeline.GetTypeName() );
 				//Debug.Log( UnityEngine.Rendering.GraphicsSettings.currentRenderPipeline.GetType().AssemblyQualifiedName );
 			}
 
 			GUILayout.FlexibleSpace();
+
+			if( GUILayout.Button( EditorHelper.TempContent( Icon.Get( "Unity Hub" ) ), s_styles.Button, GUILayout.Width( s_styles.IconButtonSize ) ) ) {
+				Help.BrowseURL( "unityhub://" );
+			}
+
 			if( UnitySymbol.UNITY_2019_3_OR_NEWER ) {
 			}
 			else {
@@ -557,6 +507,13 @@ namespace HananokiEditor.EditorToolbar {
 				GUILayout.Space( 2 );
 				GUILayout.EndVertical();
 			}
+		}
+
+
+		static void LabelBox( string text ) {
+			ScopeHorizontal.Begin( EditorStyles.helpBox );
+			GUILayout.Label( text );
+			ScopeHorizontal.End();
 		}
 	}
 }

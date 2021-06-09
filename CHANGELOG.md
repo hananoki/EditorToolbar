@@ -1,5 +1,16 @@
 # Editor Toolbar
 
+## [1.1.0] - 2021-06-09
+- SharedModule v1.9.0 or later
+
+### Added
+- Added 2021.1 support.
+- Added Unity Hub Launcher Button
+
+### Changed
+- Remove SettingsProject
+- Remove SettingsEditor
+
 ## [1.0.13] - 2021-02-19
 - SharedModule v1.7.6 or later
 

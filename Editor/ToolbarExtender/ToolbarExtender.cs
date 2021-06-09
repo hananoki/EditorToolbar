@@ -18,9 +18,10 @@ namespace UnityToolbarExtender {
 
 		static ToolbarExtender() {
 			//Type toolbarType = typeof( Editor ).Assembly.GetType( "UnityEditor.Toolbar" );
+			if( UnitySymbol.UNITY_2021_1_OR_NEWER ) return;
 
 			string fieldName;
-			if( UnitySymbol.Has( "UNITY_2019_1_OR_NEWER" ) ) {
+			if( UnitySymbol.UNITY_2019_1_OR_NEWER ) {
 				fieldName = "k_ToolCount";
 			}
 			else {
