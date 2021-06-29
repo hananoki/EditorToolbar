@@ -1,7 +1,10 @@
 # Editor Toolbar
 
+## [1.1.1] - 2021-06-30
+- `SharedModule v1.11.0` or later
+
 ## [1.1.0] - 2021-06-09
-- SharedModule v1.9.0 or later
+- `SharedModule v1.9.0` or later
 
 ### Added
 - Added 2021.1 support.

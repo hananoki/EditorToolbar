@@ -1,4 +1,7 @@
-﻿using HananokiEditor.Extensions;
+﻿// warning CS0618: 'BuildTargetGroup.Facebook' is obsolete: 'Facebook support was removed in 2019.3'
+#pragma warning disable 618
+
+using HananokiEditor.Extensions;
 using HananokiEditor.SharedModule;
 using System;
 using System.Collections.Generic;
@@ -32,7 +35,7 @@ namespace HananokiEditor.EditorToolbar {
 		const float SPACE = 8;
 		static List<BuildTargetInfo> s_buildTargetInfo;
 
-		static List<Action> addon;
+		//static List<Action> addon;
 
 		static bool m_lockReloadAssemblies;
 
@@ -141,7 +144,7 @@ namespace HananokiEditor.EditorToolbar {
 		}
 #endif
 
-		
+
 
 
 		public static void Repaint() {
@@ -186,8 +189,8 @@ namespace HananokiEditor.EditorToolbar {
 
 				m.AddSeparator( "" );
 				m.AddItem( "Hananoki-Settings", () => UnityEditorMenu.Window_Hananoki_Settings() );
-				if( EditorHelper.HasMenuItem( ExternalPackages.menuRenderPipeline ) ) {
-					m.AddItem( ExternalPackages.menuRenderPipeline.FileName(), () => ExternalPackages.menuRenderPipeline.ExecuteMenuItem() );
+				if( EditorHelper.HasMenuItem( "Window/Hananoki/Render Pipeline" ) ) {
+					m.AddItem( "Window/Hananoki/Render Pipeline".FileName(), () => "Window/Hananoki/Render Pipeline".ExecuteMenuItem() );
 				}
 
 				m.DropDownLastRect();
@@ -409,11 +412,11 @@ namespace HananokiEditor.EditorToolbar {
 			//}
 			GUILayout.Space( SPACE );
 
-			if( addon != null ) {
-				foreach( var p in addon ) {
-					p.Invoke();
-				}
-			}
+			//if( addon != null ) {
+			//	foreach( var p in addon ) {
+			//		p.Invoke();
+			//	}
+			//}
 		}
 
 
