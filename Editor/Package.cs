@@ -5,6 +5,6 @@ namespace HananokiEditor.EditorToolbar {
     public const string name = "EditorToolbar";
     public const string nameNicify = "Editor Toolbar";
     public const string editorPrefName = "Hananoki.EditorToolbar";
-    public const string version = "1.1.1";
+    public const string version = "1.2.0";
   }
 }

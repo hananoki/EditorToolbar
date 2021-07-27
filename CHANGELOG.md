@@ -1,5 +1,10 @@
 # Editor Toolbar
 
+## [1.2.0] - 2021-07-27
+
+### Changed
+- Since 2020.1, the `Asset Store Button` has been changed to a `Package Manager Button`.
+
 ## [1.1.1] - 2021-06-30
 - `SharedModule v1.11.0` or later
 

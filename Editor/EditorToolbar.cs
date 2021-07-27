@@ -310,10 +310,30 @@ namespace HananokiEditor.EditorToolbar {
 
 
 		static void Button_AssetStore() {
-			if( GUILayout.Button( EditorHelper.TempContent( EditorIcon.asset_store, S._OpenAssetStore ), s_styles.Button, GUILayout.Width( s_styles.IconButtonSize ) ) ) {
-				EditorWindowUtils.ShowWindow( UnityTypes.UnityEditor_AssetStoreWindow, EE.IsUtilityWindow( UnityTypes.UnityEditor_AssetStoreWindow ) );
+			var image =
+#if UNITY_2020_1_OR_NEWER
+				EditorIcon.package_manager;
+#else
+				EditorIcon.asset_store;
+#endif
+			var tooltip =
+#if UNITY_2020_1_OR_NEWER
+				"Package Manager";
+#else
+				S._OpenAssetStore;
+#endif
+			var windowT =
+#if UNITY_2020_1_OR_NEWER
+				UnityTypes.UnityEditor_PackageManager_UI_PackageManagerWindow;
+#else
+				UnityTypes.UnityEditor_AssetStoreWindow;
+#endif
+
+			if( GUILayout.Button( EditorHelper.TempContent( image, tooltip ), s_styles.Button, GUILayout.Width( s_styles.IconButtonSize ) ) ) {
+				EditorWindowUtils.ShowWindow( windowT, EE.IsUtilityWindow( windowT ) );
 			}
 		}
+
 
 		static void Button_Avs() {
 			if( GUILayout.Button( EditorHelper.TempContent( "VS" ), s_styles.Button, GUILayout.Width( s_styles.IconButtonSize ) ) ) {

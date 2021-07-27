@@ -5,11 +5,6 @@ using System.Reflection;
 using UnityReflection;
 using HananokiEditor;
 
-#if UNITY_2019_1_OR_NEWER
-using UnityEngine.UIElements;
-#else
-using UnityEngine.Experimental.UIElements;
-#endif
 
 namespace UnityToolbarExtender {
 	public static class ToolbarCallback {
@@ -19,15 +14,17 @@ namespace UnityToolbarExtender {
 		static FieldInfo m_imguiContainerOnGui;// = typeof( IMGUIContainer ).GetField( "m_OnGUIHandler", BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance );
 		static ScriptableObject m_currentToolbar;
 
-		static Type _VisualElement;
+		//static Type _VisualElement;
 
 		static Type m_iWindowBackendType;
 		static PropertyInfo m_windowBackend;
 		const BindingFlags bindFlags = BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance;
+
 		///// <summary>
 		/// Callback for toolbar OnGUI method.
 		/// </summary>
 		public static Action OnToolbarGUI;
+
 
 		static ToolbarCallback() {
 			if( UnitySymbol.Has( "UNITY_2020_1_OR_NEWER" ) ) {
@@ -39,9 +36,7 @@ namespace UnityToolbarExtender {
 				m_viewVisualTree = UnityTypes.UnityEditor_GUIView.GetProperty( "visualTree", bindFlags );
 			}
 
-			var _IMGUIContainer = UnityTypes.UnityEngine_UIElements_IMGUIContainer;
-			m_imguiContainerOnGui = _IMGUIContainer.GetField( "m_OnGUIHandler", bindFlags );
-			_VisualElement = UnityTypes.UnityEngine_UIElements_VisualElement;
+			m_imguiContainerOnGui = UnityTypes.UnityEngine_UIElements_IMGUIContainer.GetField( "m_OnGUIHandler", bindFlags );
 
 			EditorApplication.update -= OnUpdate;
 			EditorApplication.update += OnUpdate;
@@ -62,7 +57,7 @@ namespace UnityToolbarExtender {
 			if( m_currentToolbar == null ) return;
 
 			// Get it's visual tree
-			var pi = _VisualElement.GetProperty( "Item", BindingFlags.Public | BindingFlags.Instance );
+			var pi = UnityTypes.UnityEngine_UIElements_VisualElement.GetProperty( "Item", BindingFlags.Public | BindingFlags.Instance );
 
 			object visualTree;
 			if( UnitySymbol.Has( "UNITY_2020_1_OR_NEWER" ) ) {
